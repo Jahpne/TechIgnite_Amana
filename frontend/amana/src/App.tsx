@@ -40,7 +40,7 @@ export function Gallery() {
       <div className="flex items-center gap-3">
         <span className="text-sm font-semibold">Viewport</span>
         <Link
-          to="/"
+          to="/gallery"
           search={phone ? {} : { frame: 'phone' }}
           className="inline-flex min-h-11 items-center rounded-lg border border-line bg-surface px-4 text-sm font-semibold no-underline"
         >

@@ -1,5 +1,6 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
 import { Gallery, RootLayout } from './App'
+import { Landing } from './Landing'
 import { screens } from './screens/registry'
 
 // Code-based TanStack Router tree, built from the screen registry.
@@ -16,6 +17,13 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
+  component: Landing,
+})
+
+// Dev-only screen gallery. Remove or hide it before a real release.
+const galleryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/gallery',
   component: Gallery,
 })
 
@@ -31,7 +39,7 @@ const screenRoutes = screens.map((s) =>
   }),
 )
 
-const routeTree = rootRoute.addChildren([indexRoute, ...screenRoutes])
+const routeTree = rootRoute.addChildren([indexRoute, galleryRoute, ...screenRoutes])
 
 export const router = createRouter({ routeTree })
 

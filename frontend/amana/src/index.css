@@ -1,53 +1,28 @@
 @import 'tailwindcss';
 
-/* Amana design tokens. Light by default, dark via prefers-color-scheme. */
+/* Palette follows Paga's brand: orange, charcoal and warm greys on white. Light only, like Paga's site. */
 :root {
-  --brand: #0f766e;
-  --brand-strong: #115e59;
-  --brand-soft: #ccfbf1;
+  --brand: #f26522;
+  --brand-strong: #c2440b;
+  --brand-soft: #fff3ed;
   --on-brand: #ffffff;
-  --bg: #f6f7f8;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f0f2f4;
-  --border: #dde1e5;
-  --text: #1c2127;
-  --text-muted: #5b6672;
-  --info: #1d4ed8;
-  --info-soft: #dbeafe;
+  --surface-2: #fff7f2;
+  --border: #f0e1d8;
+  --text: #231f20;
+  --text-muted: #5f5457;
+  --info: #0369a1;
+  --info-soft: #e6f4fe;
   --success: #15803d;
   --success-soft: #dcfce7;
   --warning: #a16207;
-  --warning-soft: #fef3c7;
+  --warning-soft: #fff4e8;
   --danger: #b91c1c;
   --danger-soft: #fee2e2;
   --ai: #6d28d9;
   --ai-soft: #ede9fe;
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --brand: #2dd4bf;
-    --brand-strong: #5eead4;
-    --brand-soft: #134e4a;
-    --on-brand: #04201d;
-    --bg: #0f1316;
-    --surface: #171c20;
-    --surface-2: #1f262b;
-    --border: #2d363d;
-    --text: #e8ecef;
-    --text-muted: #9aa6b0;
-    --info: #93c5fd;
-    --info-soft: #1e3a8a;
-    --success: #86efac;
-    --success-soft: #14532d;
-    --warning: #fcd34d;
-    --warning-soft: #5a3b05;
-    --danger: #fca5a5;
-    --danger-soft: #7f1d1d;
-    --ai: #c4b5fd;
-    --ai-soft: #3b2a73;
-  }
+  color-scheme: light;
 }
 
 /* Utilities such as bg-surface, text-muted, border-line, bg-brand, text-on-brand. */
