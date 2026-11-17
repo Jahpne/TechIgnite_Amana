@@ -1,35 +1,49 @@
 import type { ReactNode } from 'react'
-import '../ui/ui.css'
+import {
+  AgreementDetailPreview,
+  ConfirmDeliveryPreview,
+  CreateOrderPreview,
+  OrderLinkPreview,
+  SignInPreview,
+} from './trade'
+import {
+  ApproveMilestonePreview,
+  NewContractPreview,
+  ReviewTermsPreview,
+  SubmitEvidencePreview,
+} from './contract'
+import { AdminDisputesPreview, MyAgreementsPreview, ReceiptPreview } from './lists'
 
-// Registry of screens for the preview gallery.
-// Screen agents: replace the render function on YOUR line only. One line per screen
-// keeps parallel edits from conflicting.
+// Registry of screens. router.tsx builds one route per entry, and the gallery at "/" lists them.
+//
+// To add or replace a screen: edit ONLY your own line below. One line per screen keeps
+// parallel edits from conflicting. Replace `render` with your screen component, for example
+//   render: () => <OrderLinkPage />
+// Screens read route params with `useParams({ strict: false })` from '@tanstack/react-router'.
 
 export interface ScreenEntry {
   id: string
+  /** TanStack Router path, with `$param` segments. */
+  path: string
   title: string
-  render: () => ReactNode
+  /** Real URL used by the gallery link, with mock ids filled in. */
+  sample: string
+  /** Wide layout (admin screens). */
   wide?: boolean
+  render: () => ReactNode
 }
 
-const placeholder = (id: string, title: string): ReactNode => (
-  <section className="card">
-    <h2>{id} {title}</h2>
-    <p className="muted">Not built yet.</p>
-  </section>
-)
-
 export const screens: ScreenEntry[] = [
-  { id: 'S1', title: 'Sign in', render: () => placeholder('S1', 'Sign in') },
-  { id: 'S2', title: 'Order link page', render: () => placeholder('S2', 'Order link page') },
-  { id: 'S3', title: 'Create order', render: () => placeholder('S3', 'Create order') },
-  { id: 'S4', title: 'Agreement detail', render: () => placeholder('S4', 'Agreement detail') },
-  { id: 'S5', title: 'Confirm or report delivery', render: () => placeholder('S5', 'Confirm or report delivery') },
-  { id: 'S6', title: 'New contract (AI)', render: () => placeholder('S6', 'New contract (AI)') },
-  { id: 'S7', title: 'Review and edit terms', render: () => placeholder('S7', 'Review and edit terms') },
-  { id: 'S8', title: 'Submit milestone evidence', render: () => placeholder('S8', 'Submit milestone evidence') },
-  { id: 'S9', title: 'Approve milestone', render: () => placeholder('S9', 'Approve milestone') },
-  { id: 'S10', title: 'My agreements', render: () => placeholder('S10', 'My agreements') },
-  { id: 'S11', title: 'Admin: disputes', wide: true, render: () => placeholder('S11', 'Admin: disputes') },
-  { id: 'S12', title: 'Receipt', render: () => placeholder('S12', 'Receipt') },
+  { id: 'S1', path: '/signin', sample: '/signin', title: 'Sign in', render: () => <SignInPreview /> },
+  { id: 'S2', path: '/o/$agreementId', sample: '/o/ord-awaiting_payment', title: 'Order link page', render: () => <OrderLinkPreview /> },
+  { id: 'S3', path: '/orders/new', sample: '/orders/new', title: 'Create order', render: () => <CreateOrderPreview /> },
+  { id: 'S4', path: '/agreements/$id', sample: '/agreements/ord-funded', title: 'Agreement detail', render: () => <AgreementDetailPreview /> },
+  { id: 'S5', path: '/agreements/$id/confirm', sample: '/agreements/ord-delivered/confirm', title: 'Confirm or report delivery', render: () => <ConfirmDeliveryPreview /> },
+  { id: 'S6', path: '/contracts/new', sample: '/contracts/new', title: 'New contract (AI)', render: () => <NewContractPreview /> },
+  { id: 'S7', path: '/agreements/$id/terms', sample: '/agreements/con-001/terms', title: 'Review and edit terms', render: () => <ReviewTermsPreview /> },
+  { id: 'S8', path: '/milestones/$id/evidence', sample: '/milestones/ms-1/evidence', title: 'Submit milestone evidence', render: () => <SubmitEvidencePreview /> },
+  { id: 'S9', path: '/milestones/$id/review', sample: '/milestones/ms-1/review', title: 'Approve milestone', render: () => <ApproveMilestonePreview /> },
+  { id: 'S10', path: '/agreements', sample: '/agreements', title: 'My agreements', render: () => <MyAgreementsPreview /> },
+  { id: 'S11', path: '/admin/disputes', sample: '/admin/disputes', title: 'Admin: disputes', wide: true, render: () => <AdminDisputesPreview /> },
+  { id: 'S12', path: '/agreements/$id/receipt', sample: '/agreements/ord-completed/receipt', title: 'Receipt', render: () => <ReceiptPreview /> },
 ]

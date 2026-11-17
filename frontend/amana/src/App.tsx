@@ -1,60 +1,68 @@
-import { useState } from 'react'
+import { Link, Outlet, useSearch } from '@tanstack/react-router'
 import { screens } from './screens/registry'
-import './ui/ui.css'
 
-// Dev-only preview gallery. The logic workstream will replace this with real routing.
+// Root layout and dev gallery. The logic workstream owns real route guards, loaders and
+// the final layout, and will extend router.tsx and replace this file as needed.
 
-type Viewport = 'phone' | 'full'
-
-function App() {
-  const [screenId, setScreenId] = useState(screens[0].id)
-  const [viewport, setViewport] = useState<Viewport>('phone')
-  const screen = screens.find((s) => s.id === screenId) ?? screens[0]
+export function RootLayout() {
+  const { frame } = useSearch({ strict: false }) as { frame?: 'phone' }
+  const phone = frame === 'phone'
 
   return (
-    <div style={{ minHeight: '100dvh' }}>
-      <header className="app-header" style={{ gap: 12, flexWrap: 'wrap' }}>
-        <div className="brand">
-          Amana <small>UI preview</small>
-        </div>
-        <div className="row">
-          <label className="muted" htmlFor="screen-select">Screen</label>
-          <select
-            id="screen-select"
-            className="input"
-            style={{ width: 'auto' }}
-            value={screen.id}
-            onChange={(e) => setScreenId(e.target.value)}
-          >
-            {screens.map((s) => (
-              <option key={s.id} value={s.id}>{s.id} {s.title}</option>
-            ))}
-          </select>
-          <div className="filters" role="group" aria-label="Viewport">
-            <button type="button" className="chip" aria-pressed={viewport === 'phone'} onClick={() => setViewport('phone')}>
-              360px phone
-            </button>
-            <button type="button" className="chip" aria-pressed={viewport === 'full'} onClick={() => setViewport('full')}>
-              Full width
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className={phone ? 'min-h-dvh bg-surface-2 py-4' : 'min-h-dvh'}>
       <div
-        style={{
-          width: viewport === 'phone' ? 360 : '100%',
-          maxWidth: '100%',
-          margin: viewport === 'phone' ? '16px auto' : 0,
-          border: viewport === 'phone' ? '1px solid var(--border)' : 0,
-          borderRadius: viewport === 'phone' ? 16 : 0,
-          overflow: 'hidden',
-          background: 'var(--bg)',
-        }}
+        className={
+          phone
+            ? 'mx-auto min-h-[640px] w-[360px] overflow-hidden rounded-3xl border-4 border-ink/80 bg-page shadow-xl'
+            : ''
+        }
       >
-        <main className={`app-main${screen.wide ? ' wide' : ''}`}>{screen.render()}</main>
+        <div className="bg-warning-soft px-4 py-1.5 text-center text-xs font-semibold text-warning" role="note">
+          Demo runs on the Paga sandbox. No real money moves.
+        </div>
+        <Outlet />
       </div>
     </div>
   )
 }
 
-export default App
+export function Gallery() {
+  const { frame } = useSearch({ strict: false }) as { frame?: 'phone' }
+  const phone = frame === 'phone'
+
+  return (
+    <main className="mx-auto grid max-w-2xl gap-4 p-4">
+      <header className="grid gap-1">
+        <h1 className="text-2xl font-bold text-brand">Amana UI preview</h1>
+        <p className="text-sm text-muted">Developer gallery. Every screen with mock data.</p>
+      </header>
+
+      <div className="flex items-center gap-3">
+        <span className="text-sm font-semibold">Viewport</span>
+        <Link
+          to="/"
+          search={phone ? {} : { frame: 'phone' }}
+          className="inline-flex min-h-11 items-center rounded-lg border border-line bg-surface px-4 text-sm font-semibold no-underline"
+        >
+          {phone ? 'Switch to full width' : 'Switch to 360px phone frame'}
+        </Link>
+      </div>
+
+      <ul className="grid gap-2">
+        {screens.map((s) => (
+          <li key={s.id}>
+            <a
+              href={`${s.sample}${phone ? '?frame=phone' : ''}`}
+              className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-2 no-underline hover:bg-surface-2"
+            >
+              <span>
+                <strong>{s.id}</strong> {s.title}
+              </span>
+              <code className="text-xs text-muted">{s.path}</code>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
