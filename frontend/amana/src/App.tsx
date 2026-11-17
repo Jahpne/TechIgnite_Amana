@@ -17,9 +17,6 @@ export function RootLayout() {
             : ''
         }
       >
-        <div className="bg-warning-soft px-4 py-1.5 text-center text-xs font-semibold text-warning" role="note">
-          Demo runs on the Paga sandbox. No real money moves.
-        </div>
         <Outlet />
       </div>
     </div>

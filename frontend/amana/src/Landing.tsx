@@ -316,10 +316,6 @@ export function Landing() {
 
         <footer className="text-white/70" style={{ background: '#0b2159' }}>
           <div className="mx-auto grid max-w-5xl gap-2 px-4 py-8 text-sm">
-            <p>
-              <strong className="text-white">This is a hackathon demo.</strong> It runs on the Paga sandbox, so no real money
-              moves. A live service would need a licensed or provider-held safeguarding arrangement.
-            </p>
             <p>Amana. Agree. Verify. Pay.</p>
           </div>
         </footer>

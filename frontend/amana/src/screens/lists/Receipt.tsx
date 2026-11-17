@@ -37,10 +37,6 @@ export function Receipt({ receipt, onPrint, onShare }: ReceiptProps) {
           <Timeline entries={receipt.events} />
         </section>
 
-        <p className="text-xs text-muted">
-          This receipt was issued on the Paga sandbox for a demo. No real money moved. Production use needs a
-          licensed or provider-held safeguarding arrangement.
-        </p>
       </Card>
 
       <div className="flex flex-wrap gap-2 print:hidden">
