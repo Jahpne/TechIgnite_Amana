@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { requestOTP, verifyOTP } from '../api/auth'
+import { safeNext } from '../auth/next'
 import { setSession } from '../auth/session'
 import { errorMessage } from '../hooks/errors'
 
@@ -18,7 +19,9 @@ const ACCOUNTS = [
 // code with the sign-in request. That only happens on the sandbox.
 const quickSignInEnabled = import.meta.env.VITE_AUTOFILL_OTP === 'true'
 
-export function QuickSignIn() {
+// compact: used inside another page (the sign-in page), so no outer spacing.
+// next: where to go after signing in. Admins go to the disputes page when nothing is given.
+export function QuickSignIn({ compact, next }: { compact?: boolean; next?: string }) {
   const router = useRouter()
   const qc = useQueryClient()
   const [busy, setBusy] = useState<string>()
@@ -39,7 +42,7 @@ export function QuickSignIn() {
       qc.clear()
       setSession(result.token)
       qc.setQueryData(['me'], result.user)
-      router.history.push(isAdmin ? '/admin/disputes' : '/agreements')
+      router.history.push(safeNext(next, isAdmin ? '/admin/disputes' : '/agreements'))
     } catch (err) {
       setError(errorMessage(err))
     } finally {
@@ -48,7 +51,7 @@ export function QuickSignIn() {
   }
 
   return (
-    <section id="signin" className="mx-auto w-full max-w-5xl px-4 pt-10">
+    <section id="signin" className={compact ? 'w-full' : 'mx-auto w-full max-w-5xl px-4 pt-10'}>
       <div className="grid gap-4 rounded-3xl border border-line bg-surface p-6 shadow-sm">
         <div className="grid gap-1">
           <h2 className="text-2xl font-extrabold tracking-tight">Sign in</h2>
@@ -72,9 +75,11 @@ export function QuickSignIn() {
             {error}
           </p>
         )}
-        <p className="text-sm text-muted">
-          Prefer your own number? <a href="/signin">Sign in with a phone number</a>.
-        </p>
+        {!compact && (
+          <p className="text-sm text-muted">
+            Prefer your own number? <a href="/signin">Sign in with a phone number</a>.
+          </p>
+        )}
       </div>
     </section>
   )

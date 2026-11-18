@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { QuickSignIn } from '../pages/QuickSignIn'
 import { SignInPage } from '../pages/SignInPage'
 import { ScreenFrame } from './-ScreenFrame'
 
@@ -12,6 +13,7 @@ export const Route = createFileRoute('/signin')({
     return (
       <ScreenFrame>
         <SignInPage next={next} />
+        <QuickSignIn compact next={next} />
       </ScreenFrame>
     )
   },

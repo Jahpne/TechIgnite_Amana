@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { requestOTP, verifyOTP } from '../api/auth'
+import { safeNext } from '../auth/next'
 import { toE164 } from '../auth/phone'
 import { setSession } from '../auth/session'
 import { errorMessage } from '../hooks/errors'
@@ -11,11 +12,6 @@ import { isValidNigerianPhone } from '../screens/trade/shared'
 const AUTOFILL_OTP = import.meta.env.VITE_AUTOFILL_OTP === 'true'
 const RESEND_SECONDS = 30
 const MAX_WRONG_CODES = 3
-
-// Only follow addresses inside this app, never another site.
-function safeNext(next: string | undefined): string {
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/agreements'
-}
 
 export function SignInPage({ next }: { next?: string }) {
   const router = useRouter()
