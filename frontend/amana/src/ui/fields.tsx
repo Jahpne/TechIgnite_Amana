@@ -2,8 +2,8 @@ import { useId } from 'react'
 import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from 'react'
 
 const inputBase =
-  'min-h-11 w-full rounded-lg border bg-surface px-3 py-2.5 text-ink placeholder:text-muted aria-[invalid=true]:border-danger'
-const inputBorder = 'border-line'
+  'min-h-12 w-full rounded-xl border bg-surface px-3.5 py-3 text-ink transition-colors placeholder:text-muted/70 hover:border-line-strong focus:border-brand aria-[invalid=true]:border-danger'
+const inputBorder = 'border-line-strong'
 
 interface FieldProps {
   label: string
@@ -16,8 +16,8 @@ export function Field({ label, hint, error, children }: FieldProps) {
   const id = useId()
   const descId = error || hint ? `${id}-desc` : undefined
   return (
-    <div className="grid gap-1">
-      <label htmlFor={id} className="text-sm font-semibold">
+    <div className="grid gap-1.5">
+      <label htmlFor={id} className="text-sm font-bold">
         {label}
       </label>
       {children({ id, 'aria-invalid': Boolean(error), 'aria-describedby': descId })}
@@ -93,12 +93,12 @@ export function AmountInput({
         <div className="flex items-stretch">
           <span
             aria-hidden="true"
-            className="grid place-items-center rounded-l-lg border border-r-0 border-line bg-surface-2 px-3 font-semibold text-muted"
+            className="grid place-items-center rounded-l-xl border border-r-0 border-line-strong bg-surface-2 px-3.5 font-bold text-muted"
           >
             ₦
           </span>
           <input
-            className={`${inputBase} ${inputBorder} rounded-l-none`}
+            className={`${inputBase} ${inputBorder} rounded-l-none font-display text-lg font-bold tabular-nums`}
             {...a11y}
             {...rest}
             inputMode="numeric"
@@ -150,7 +150,7 @@ export function OtpInput({
     <Field label="One-time code" hint={`Enter the ${length}-digit code we sent you`} error={error}>
       {(a11y) => (
         <input
-          className={`${inputBase} ${inputBorder} text-center text-xl font-bold tracking-[0.5em]`}
+          className={`${inputBase} ${inputBorder} py-4 text-center font-display text-2xl font-extrabold tracking-[0.45em]`}
           {...a11y}
           inputMode="numeric"
           autoComplete="one-time-code"
