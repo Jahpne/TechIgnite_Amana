@@ -11,6 +11,7 @@ import { isValidNigerianPhone } from '../screens/trade/shared'
 
 const AUTOFILL_OTP = import.meta.env.VITE_AUTOFILL_OTP === 'true'
 const RESEND_SECONDS = 30
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MAX_WRONG_CODES = 3
 
 export function SignInPage({ next }: { next?: string }) {
@@ -19,6 +20,9 @@ export function SignInPage({ next }: { next?: string }) {
 
   const [step, setStep] = useState<'phone' | 'otp'>('phone')
   const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState<string>()
+  const [sentTo, setSentTo] = useState<string>()
   const [code, setCode] = useState('')
   const [phoneError, setPhoneError] = useState<string>()
   const [codeError, setCodeError] = useState<string>()
@@ -37,13 +41,29 @@ export function SignInPage({ next }: { next?: string }) {
       setPhoneError('Enter a valid Nigerian phone number, for example 0801 234 5678.')
       return
     }
+    const address = email.trim()
+    if (address && !EMAIL_PATTERN.test(address)) {
+      setEmailError('Enter a valid email address, for example you@example.com.')
+      return
+    }
     setLoading(true)
     try {
-      const sent = await requestOTP(toE164(phone))
-      setStep('otp')
+      const sent = await requestOTP(toE164(phone), address || undefined)
       // Presenter convenience: while the backend returns debugCode (sandbox) and this flag is on,
-      // fill the code in. Never needed in a real build, where codes arrive by message.
-      setCode(AUTOFILL_OTP && sent.debugCode ? sent.debugCode : '')
+      // fill the code in. Never needed in a real build, where codes arrive by email.
+      const autofill = AUTOFILL_OTP && sent.debugCode ? sent.debugCode : undefined
+      if (!sent.sent && !autofill) {
+        // Nothing was delivered, so do not send the person to a code box they can never fill.
+        setEmailError(
+          address
+            ? 'We could not email a code to that address. Check it and try again.'
+            : 'Enter your email address so we can send your code.',
+        )
+        return
+      }
+      setStep('otp')
+      setSentTo(sent.sent ? address || 'the email address on your account' : phone)
+      setCode(autofill ?? '')
       setResendIn(RESEND_SECONDS)
     } catch (err) {
       setPhoneError(errorMessage(err))
@@ -75,8 +95,11 @@ export function SignInPage({ next }: { next?: string }) {
     <SignIn
       step={step}
       phone={phone}
+      email={email}
       code={code}
       phoneError={phoneError}
+      emailError={emailError}
+      sentTo={sentTo}
       codeError={codeError}
       loading={loading}
       resendIn={resendIn}
@@ -84,6 +107,10 @@ export function SignInPage({ next }: { next?: string }) {
       onPhoneChange={(v) => {
         setPhone(v)
         setPhoneError(undefined)
+      }}
+      onEmailChange={(v) => {
+        setEmail(v)
+        setEmailError(undefined)
       }}
       onCodeChange={(v) => {
         setCode(v)

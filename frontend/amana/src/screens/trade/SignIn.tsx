@@ -1,17 +1,21 @@
-import { Banner, Button, Card, OtpInput, PageTitle, PhoneInput } from '../../ui'
-import { } from './shared'
+import { Banner, Button, Card, OtpInput, PageTitle, PhoneInput, TextField } from '../../ui'
 
 export interface SignInProps {
   step: 'phone' | 'otp'
   phone: string
+  email: string
   code: string
   phoneError?: string
+  emailError?: string
+  /** Where the code was sent, for the line above the code box. */
+  sentTo?: string
   codeError?: string
   loading?: boolean
   /** Seconds until a new code can be requested. 0 means resend is available. */
   resendIn: number
   rateLimited?: boolean
   onPhoneChange: (value: string) => void
+  onEmailChange: (value: string) => void
   onCodeChange: (value: string) => void
   onSendCode: () => void
   onVerify: () => void
@@ -25,7 +29,7 @@ export function SignIn(p: SignInProps) {
       <div className="grid gap-4">
         <PageTitle
           title="Sign in"
-          subtitle="Enter your phone number. We will text you a one-time code. No password needed."
+          subtitle="Enter your phone number and email address. We email you a one-time code. No password needed."
         />
         <Card>
           <form
@@ -36,6 +40,17 @@ export function SignIn(p: SignInProps) {
             }}
           >
             <PhoneInput value={p.phone} onChange={p.onPhoneChange} error={p.phoneError} />
+            <TextField
+              label="Email address"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={p.email}
+              onChange={p.onEmailChange}
+              error={p.emailError}
+              hint="We send your sign-in code here."
+            />
             <Button variant="primary" block type="submit" loading={p.loading}>
               Send code
             </Button>
@@ -48,7 +63,7 @@ export function SignIn(p: SignInProps) {
 
   return (
     <div className="grid gap-4">
-      <PageTitle title="Enter your code" subtitle={`We sent a 6-digit code to ${p.phone}.`} />
+      <PageTitle title="Enter your code" subtitle={`We sent a 6-digit code to ${p.sentTo ?? p.phone}.`} />
       <Card>
         <form
           className="grid gap-4"
