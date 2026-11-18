@@ -15,8 +15,7 @@ import {
   formatNaira,
 } from '../../ui'
 import type { OutcomeState } from '../../ui'
-import type { AdminDispute, DisputeSide } from '../../mocks/data'
-import { adminDisputes } from '../../mocks/data'
+import type { AdminDispute, DisputeSide } from '../../ui'
 
 export type Ruling = 'release' | 'refund'
 export type ReviewDecision = 'approve' | 'reject'
@@ -380,39 +379,5 @@ function DisputeTable({
         </tbody>
       </table>
     </div>
-  )
-}
-
-const previewReviewItems: ReviewItem[] = [
-  {
-    id: 'rev-201',
-    agreementTitle: 'Website for Grace Eze',
-    milestoneTitle: 'Website deployed',
-    amount: 50000,
-    outcome: 'NEEDS_HUMAN_REVIEW',
-    reason: 'CI results were incomplete: two checks are still pending after the retry window.',
-  },
-]
-
-export function AdminDisputesPreview() {
-  const [disputes, setDisputes] = useState<AdminDispute[]>(adminDisputes)
-  const [items, setItems] = useState<ReviewItem[]>(previewReviewItems)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-
-  return (
-    <AdminDisputes
-      disputes={disputes}
-      reviewItems={items}
-      selectedId={selectedId}
-      onSelect={setSelectedId}
-      onRule={(id) => {
-        setDisputes((ds) => ds.map((d) => (d.id === id ? { ...d, status: 'RULED' } : d)))
-        setSelectedId(null)
-      }}
-      onReview={(id) => {
-        setItems((is) => is.filter((i) => i.id !== id))
-        setSelectedId(null)
-      }}
-    />
   )
 }

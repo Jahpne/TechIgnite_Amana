@@ -10,8 +10,7 @@ import {
   formatNaira,
 } from '../../ui'
 import type { AgreementStatus } from '../../ui'
-import type { AgreementRow } from '../../mocks/data'
-import { agreementRows } from '../../mocks/data'
+import type { AgreementRow } from '../../ui'
 
 export type AgreementFilter =
   | 'all'
@@ -23,9 +22,9 @@ export type AgreementFilter =
   | 'expired'
 
 const statusGroups: Record<Exclude<AgreementFilter, 'all' | 'needs_action'>, AgreementStatus[]> = {
-  awaiting_payment: ['AWAITING_ACCEPTANCE', 'AWAITING_PAYMENT', 'PAYMENT_PENDING'],
-  in_progress: ['FUNDED', 'IN_DELIVERY', 'DELIVERED', 'RELEASABLE', 'PAYOUT_PENDING', 'PAYOUT_FAILED'],
-  completed: ['COMPLETED'],
+  awaiting_payment: ['DRAFT', 'AWAITING_PAYMENT'],
+  in_progress: ['FUNDED', 'IN_PROGRESS', 'EVIDENCE_IN', 'RELEASABLE', 'PAYING_OUT'],
+  completed: ['COMPLETED', 'REFUNDED'],
   disputed: ['DISPUTED'],
   expired: ['EXPIRED'],
 }
@@ -139,38 +138,5 @@ export function MyAgreements({ rows, loading, error, onRetry, onOpen, onCreateOr
         </ul>
       )}
     </>
-  )
-}
-
-type PreviewMode = 'normal' | 'loading' | 'error' | 'empty'
-
-export function MyAgreementsPreview() {
-  const [mode, setMode] = useState<PreviewMode>('normal')
-  const [opened, setOpened] = useState<string>()
-
-  return (
-    <div className="grid gap-4">
-      <FilterChips<PreviewMode>
-        label="Preview state"
-        value={mode}
-        onChange={setMode}
-        options={[
-          { value: 'normal', label: 'Normal' },
-          { value: 'loading', label: 'Loading' },
-          { value: 'error', label: 'Error' },
-          { value: 'empty', label: 'Empty' },
-        ]}
-      />
-      <MyAgreements
-        rows={mode === 'empty' ? [] : agreementRows}
-        loading={mode === 'loading'}
-        error={mode === 'error' ? 'The server did not respond. Check your connection and try again.' : undefined}
-        onRetry={() => setMode('normal')}
-        onOpen={setOpened}
-        onCreateOrder={() => setOpened('create-order')}
-        onNewContract={() => setOpened('new-contract')}
-      />
-      {opened && <p className="text-sm text-muted" role="status">Preview: would open “{opened}”.</p>}
-    </div>
   )
 }

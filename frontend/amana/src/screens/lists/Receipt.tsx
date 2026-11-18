@@ -1,6 +1,5 @@
 import { Button, Card, KeyValues, PageTitle, Timeline, formatNaira } from '../../ui'
-import type { Receipt as ReceiptData } from '../../mocks/data'
-import { receipt as mockReceipt } from '../../mocks/data'
+import type { Receipt as ReceiptData } from '../../ui'
 
 export interface ReceiptProps {
   receipt: ReceiptData
@@ -45,8 +44,4 @@ export function Receipt({ receipt, onPrint, onShare }: ReceiptProps) {
       </div>
     </div>
   )
-}
-
-export function ReceiptPreview() {
-  return <Receipt receipt={mockReceipt} onShare={() => undefined} />
 }

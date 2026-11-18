@@ -1,11 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AdminDisputesPreview } from '../../../screens/lists'
+import { AdminDisputesPage } from '../../../pages/AdminDisputesPage'
 import { ScreenFrame } from '../../-ScreenFrame'
 
 export const Route = createFileRoute('/_protected/admin/disputes')({
-  component: () => (
-    <ScreenFrame wide>
-      <AdminDisputesPreview />
-    </ScreenFrame>
-  ),
+  component: function Page() {
+    return (
+      <ScreenFrame wide>
+        <AdminDisputesPage />
+      </ScreenFrame>
+    )
+  },
 })

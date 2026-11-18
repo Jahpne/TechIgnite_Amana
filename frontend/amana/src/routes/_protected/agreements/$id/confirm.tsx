@@ -1,11 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { ConfirmDeliveryPreview } from '../../../../screens/trade'
+import { ConfirmDeliveryPage } from '../../../../pages/ConfirmDeliveryPage'
 import { ScreenFrame } from '../../../-ScreenFrame'
 
 export const Route = createFileRoute('/_protected/agreements/$id/confirm')({
-  component: () => (
-    <ScreenFrame>
-      <ConfirmDeliveryPreview />
-    </ScreenFrame>
-  ),
+  component: function Page() {
+    const { id } = Route.useParams()
+    return (
+      <ScreenFrame>
+        <ConfirmDeliveryPage id={id} />
+      </ScreenFrame>
+    )
+  },
 })

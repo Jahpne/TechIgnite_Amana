@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
-import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ProtectedAdminDisputesRouteImport } from './routes/_protected/admin/disputes'
 import { Route as ProtectedAgreementsIndexRouteImport } from './routes/_protected/agreements/index'
@@ -22,8 +21,8 @@ import { Route as ProtectedAgreementsIdIndexRouteImport } from './routes/_protec
 import { Route as ProtectedAgreementsIdConfirmRouteImport } from './routes/_protected/agreements/$id/confirm'
 import { Route as ProtectedAgreementsIdReceiptRouteImport } from './routes/_protected/agreements/$id/receipt'
 import { Route as ProtectedAgreementsIdTermsRouteImport } from './routes/_protected/agreements/$id/terms'
-import { Route as ProtectedMilestonesIdEvidenceRouteImport } from './routes/_protected/milestones/$id/evidence'
-import { Route as ProtectedMilestonesIdReviewRouteImport } from './routes/_protected/milestones/$id/review'
+import { Route as ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRouteImport } from './routes/_protected/agreements/$id/milestones/$milestoneId/evidence'
+import { Route as ProtectedAgreementsIdMilestonesMilestoneIdReviewRouteImport } from './routes/_protected/agreements/$id/milestones/$milestoneId/review'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -32,11 +31,6 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
   id: '/_protected',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SigninRoute = SigninRouteImport.update({
@@ -94,22 +88,21 @@ const ProtectedAgreementsIdTermsRoute =
     path: '/agreements/$id/terms',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
-const ProtectedMilestonesIdEvidenceRoute =
-  ProtectedMilestonesIdEvidenceRouteImport.update({
-    id: '/milestones/$id/evidence',
-    path: '/milestones/$id/evidence',
+const ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute =
+  ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRouteImport.update({
+    id: '/agreements/$id/milestones/$milestoneId/evidence',
+    path: '/agreements/$id/milestones/$milestoneId/evidence',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
-const ProtectedMilestonesIdReviewRoute =
-  ProtectedMilestonesIdReviewRouteImport.update({
-    id: '/milestones/$id/review',
-    path: '/milestones/$id/review',
+const ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute =
+  ProtectedAgreementsIdMilestonesMilestoneIdReviewRouteImport.update({
+    id: '/agreements/$id/milestones/$milestoneId/review',
+    path: '/agreements/$id/milestones/$milestoneId/review',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/gallery': typeof GalleryRoute
   '/signin': typeof SigninRoute
   '/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/contracts/new': typeof ProtectedContractsNewRoute
@@ -119,13 +112,12 @@ export interface FileRoutesByFullPath {
   '/agreements/$id/confirm': typeof ProtectedAgreementsIdConfirmRoute
   '/agreements/$id/receipt': typeof ProtectedAgreementsIdReceiptRoute
   '/agreements/$id/terms': typeof ProtectedAgreementsIdTermsRoute
-  '/milestones/$id/evidence': typeof ProtectedMilestonesIdEvidenceRoute
-  '/milestones/$id/review': typeof ProtectedMilestonesIdReviewRoute
   '/agreements/$id/': typeof ProtectedAgreementsIdIndexRoute
+  '/agreements/$id/milestones/$milestoneId/evidence': typeof ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute
+  '/agreements/$id/milestones/$milestoneId/review': typeof ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/gallery': typeof GalleryRoute
   '/signin': typeof SigninRoute
   '/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/contracts/new': typeof ProtectedContractsNewRoute
@@ -135,15 +127,14 @@ export interface FileRoutesByTo {
   '/agreements/$id/confirm': typeof ProtectedAgreementsIdConfirmRoute
   '/agreements/$id/receipt': typeof ProtectedAgreementsIdReceiptRoute
   '/agreements/$id/terms': typeof ProtectedAgreementsIdTermsRoute
-  '/milestones/$id/evidence': typeof ProtectedMilestonesIdEvidenceRoute
-  '/milestones/$id/review': typeof ProtectedMilestonesIdReviewRoute
   '/agreements/$id': typeof ProtectedAgreementsIdIndexRoute
+  '/agreements/$id/milestones/$milestoneId/evidence': typeof ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute
+  '/agreements/$id/milestones/$milestoneId/review': typeof ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteRouteWithChildren
-  '/gallery': typeof GalleryRoute
   '/signin': typeof SigninRoute
   '/_protected/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/_protected/contracts/new': typeof ProtectedContractsNewRoute
@@ -153,15 +144,14 @@ export interface FileRoutesById {
   '/_protected/agreements/$id/confirm': typeof ProtectedAgreementsIdConfirmRoute
   '/_protected/agreements/$id/receipt': typeof ProtectedAgreementsIdReceiptRoute
   '/_protected/agreements/$id/terms': typeof ProtectedAgreementsIdTermsRoute
-  '/_protected/milestones/$id/evidence': typeof ProtectedMilestonesIdEvidenceRoute
-  '/_protected/milestones/$id/review': typeof ProtectedMilestonesIdReviewRoute
   '/_protected/agreements/$id/': typeof ProtectedAgreementsIdIndexRoute
+  '/_protected/agreements/$id/milestones/$milestoneId/evidence': typeof ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute
+  '/_protected/agreements/$id/milestones/$milestoneId/review': typeof ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/gallery'
     | '/signin'
     | '/admin/disputes'
     | '/contracts/new'
@@ -171,13 +161,12 @@ export interface FileRouteTypes {
     | '/agreements/$id/confirm'
     | '/agreements/$id/receipt'
     | '/agreements/$id/terms'
-    | '/milestones/$id/evidence'
-    | '/milestones/$id/review'
     | '/agreements/$id/'
+    | '/agreements/$id/milestones/$milestoneId/evidence'
+    | '/agreements/$id/milestones/$milestoneId/review'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/gallery'
     | '/signin'
     | '/admin/disputes'
     | '/contracts/new'
@@ -187,14 +176,13 @@ export interface FileRouteTypes {
     | '/agreements/$id/confirm'
     | '/agreements/$id/receipt'
     | '/agreements/$id/terms'
-    | '/milestones/$id/evidence'
-    | '/milestones/$id/review'
     | '/agreements/$id'
+    | '/agreements/$id/milestones/$milestoneId/evidence'
+    | '/agreements/$id/milestones/$milestoneId/review'
   id:
     | '__root__'
     | '/'
     | '/_protected'
-    | '/gallery'
     | '/signin'
     | '/_protected/admin/disputes'
     | '/_protected/contracts/new'
@@ -204,15 +192,14 @@ export interface FileRouteTypes {
     | '/_protected/agreements/$id/confirm'
     | '/_protected/agreements/$id/receipt'
     | '/_protected/agreements/$id/terms'
-    | '/_protected/milestones/$id/evidence'
-    | '/_protected/milestones/$id/review'
     | '/_protected/agreements/$id/'
+    | '/_protected/agreements/$id/milestones/$milestoneId/evidence'
+    | '/_protected/agreements/$id/milestones/$milestoneId/review'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
-  GalleryRoute: typeof GalleryRoute
   SigninRoute: typeof SigninRoute
 }
 
@@ -230,13 +217,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof ProtectedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signin': {
@@ -309,18 +289,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAgreementsIdTermsRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
-    '/_protected/milestones/$id/evidence': {
-      id: '/_protected/milestones/$id/evidence'
-      path: '/milestones/$id/evidence'
-      fullPath: '/milestones/$id/evidence'
-      preLoaderRoute: typeof ProtectedMilestonesIdEvidenceRouteImport
+    '/_protected/agreements/$id/milestones/$milestoneId/evidence': {
+      id: '/_protected/agreements/$id/milestones/$milestoneId/evidence'
+      path: '/agreements/$id/milestones/$milestoneId/evidence'
+      fullPath: '/agreements/$id/milestones/$milestoneId/evidence'
+      preLoaderRoute: typeof ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
-    '/_protected/milestones/$id/review': {
-      id: '/_protected/milestones/$id/review'
-      path: '/milestones/$id/review'
-      fullPath: '/milestones/$id/review'
-      preLoaderRoute: typeof ProtectedMilestonesIdReviewRouteImport
+    '/_protected/agreements/$id/milestones/$milestoneId/review': {
+      id: '/_protected/agreements/$id/milestones/$milestoneId/review'
+      path: '/agreements/$id/milestones/$milestoneId/review'
+      fullPath: '/agreements/$id/milestones/$milestoneId/review'
+      preLoaderRoute: typeof ProtectedAgreementsIdMilestonesMilestoneIdReviewRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
   }
@@ -335,9 +315,9 @@ interface ProtectedRouteRouteChildren {
   ProtectedAgreementsIdConfirmRoute: typeof ProtectedAgreementsIdConfirmRoute
   ProtectedAgreementsIdReceiptRoute: typeof ProtectedAgreementsIdReceiptRoute
   ProtectedAgreementsIdTermsRoute: typeof ProtectedAgreementsIdTermsRoute
-  ProtectedMilestonesIdEvidenceRoute: typeof ProtectedMilestonesIdEvidenceRoute
-  ProtectedMilestonesIdReviewRoute: typeof ProtectedMilestonesIdReviewRoute
   ProtectedAgreementsIdIndexRoute: typeof ProtectedAgreementsIdIndexRoute
+  ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute: typeof ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute
+  ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute: typeof ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
@@ -349,9 +329,11 @@ const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedAgreementsIdConfirmRoute: ProtectedAgreementsIdConfirmRoute,
   ProtectedAgreementsIdReceiptRoute: ProtectedAgreementsIdReceiptRoute,
   ProtectedAgreementsIdTermsRoute: ProtectedAgreementsIdTermsRoute,
-  ProtectedMilestonesIdEvidenceRoute: ProtectedMilestonesIdEvidenceRoute,
-  ProtectedMilestonesIdReviewRoute: ProtectedMilestonesIdReviewRoute,
   ProtectedAgreementsIdIndexRoute: ProtectedAgreementsIdIndexRoute,
+  ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute:
+    ProtectedAgreementsIdMilestonesMilestoneIdEvidenceRoute,
+  ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute:
+    ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute,
 }
 
 const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
@@ -361,7 +343,6 @@ const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
-  GalleryRoute: GalleryRoute,
   SigninRoute: SigninRoute,
 }
 export const routeTree = rootRouteImport

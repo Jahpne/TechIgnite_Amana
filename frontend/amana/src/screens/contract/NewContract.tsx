@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
 import { Banner, Button, Card, LoadingState, PageTitle, PhoneInput, TextArea } from '../../ui'
-import { milestoneContract } from '../../mocks/data'
 import { TermsEditor } from './TermsEditor'
-import { draftFromAgreement, draftIssues } from './amounts'
+import { draftIssues } from './amounts'
 import type { TermsDraft } from './amounts'
 
 export type CompileStatus = 'idle' | 'compiling' | 'error' | 'ready'
@@ -101,45 +99,6 @@ export function NewContract({
           </Button>
         </>
       )}
-    </div>
-  )
-}
-
-// Dev gallery wrapper: drives the screen from mocks with local state. Not used in production.
-export function NewContractPreview() {
-  const [description, setDescription] = useState('')
-  const [phone, setPhone] = useState('')
-  const [status, setStatus] = useState<CompileStatus>('idle')
-  const [draft, setDraft] = useState<TermsDraft | undefined>()
-  const [continued, setContinued] = useState(false)
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-
-  useEffect(() => () => clearTimeout(timer.current), [])
-
-  const compile = () => {
-    setStatus('compiling')
-    setContinued(false)
-    clearTimeout(timer.current)
-    timer.current = setTimeout(() => {
-      setDraft(draftFromAgreement(milestoneContract))
-      setStatus('ready')
-    }, 900)
-  }
-
-  return (
-    <div className="grid gap-4">
-      <NewContract
-        description={description}
-        onDescriptionChange={setDescription}
-        counterpartyPhone={phone}
-        onCounterpartyPhoneChange={setPhone}
-        status={status}
-        draft={draft}
-        onDraftChange={setDraft}
-        onCompile={compile}
-        onContinue={() => setContinued(true)}
-      />
-      {continued && <Banner tone="info" title="Preview only">The real app goes to the review screen here.</Banner>}
     </div>
   )
 }

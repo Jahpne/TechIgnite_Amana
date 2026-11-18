@@ -16,6 +16,8 @@ export interface OrderForm {
   price: string
   buyerPhone: string
   deliveryTerms: string
+  pickupAddress: string
+  dropoffAddress: string
 }
 
 export type OrderErrors = Partial<Record<keyof OrderForm, string>>
@@ -33,6 +35,8 @@ export function validateOrder(v: OrderForm): OrderErrors {
   if (v.deliveryTerms.trim().length < 5) {
     errors.deliveryTerms = 'Describe the delivery terms, for example "Chowdeck delivery within Lagos".'
   }
+  if (v.pickupAddress.trim().length < 3) errors.pickupAddress = 'Enter the pickup address.'
+  if (v.dropoffAddress.trim().length < 3) errors.dropoffAddress = 'Enter the drop-off address.'
   return errors
 }
 

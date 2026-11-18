@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { } from 'react'
 import { AmountInput, Banner, Button, Card, PageTitle, PhoneInput, TextArea, TextField, formatNaira } from '../../ui'
-import { validateOrder } from './shared'
+import { } from './shared'
 import type { OrderErrors, OrderForm } from './shared'
 
 export interface CreateOrderProps {
@@ -88,52 +88,25 @@ export function CreateOrder(p: CreateOrderProps) {
             error={p.errors.deliveryTerms}
             placeholder="Chowdeck delivery within Lagos"
           />
+          <TextField
+            label="Pickup address"
+            value={p.values.pickupAddress}
+            onChange={(v) => p.onChange('pickupAddress', v)}
+            error={p.errors.pickupAddress}
+            hint="Where Chowdeck collects the item."
+          />
+          <TextField
+            label="Drop-off address"
+            value={p.values.dropoffAddress}
+            onChange={(v) => p.onChange('dropoffAddress', v)}
+            error={p.errors.dropoffAddress}
+            hint="Where the buyer wants it delivered."
+          />
           <Button variant="primary" block type="submit" loading={p.loading}>
             Create order
           </Button>
         </form>
       </Card>
     </div>
-  )
-}
-
-const empty: OrderForm = { item: '', price: '', buyerPhone: '', deliveryTerms: '' }
-
-export function CreateOrderPreview() {
-  const [values, setValues] = useState<OrderForm>(empty)
-  const [errors, setErrors] = useState<OrderErrors>({})
-  const [link, setLink] = useState<string>()
-  const [copied, setCopied] = useState(false)
-
-  return (
-    <CreateOrder
-      values={values}
-      errors={errors}
-      createdLink={link}
-      copied={copied}
-      onChange={(field, value) => {
-        setValues((v) => ({ ...v, [field]: value }))
-        setErrors((e) => ({ ...e, [field]: undefined }))
-      }}
-      onSubmit={() => {
-        const found = validateOrder(values)
-        setErrors(found)
-        if (Object.keys(found).length === 0) setLink('https://amana.example/o/ord-1042')
-      }}
-      onCopy={() => {
-        try {
-          void navigator.clipboard?.writeText(link ?? '')
-        } catch {
-          // Clipboard can be blocked. The link is still shown on screen.
-        }
-        setCopied(true)
-      }}
-      onCreateAnother={() => {
-        setValues(empty)
-        setErrors({})
-        setLink(undefined)
-        setCopied(false)
-      }}
-    />
   )
 }

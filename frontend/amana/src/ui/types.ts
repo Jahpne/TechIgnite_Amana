@@ -5,29 +5,31 @@ export type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger' | 'ai'
 
 export type Role = 'buyer' | 'seller' | 'client' | 'freelancer' | 'admin'
 
+// Mirrors the backend's AgreementStatus enum (prisma/schema.prisma in amana-backend).
 export type AgreementStatus =
   | 'DRAFT'
-  | 'AWAITING_ACCEPTANCE'
   | 'AWAITING_PAYMENT'
-  | 'PAYMENT_PENDING'
   | 'FUNDED'
-  | 'IN_DELIVERY'
-  | 'DELIVERED'
+  | 'IN_PROGRESS'
+  | 'EVIDENCE_IN'
   | 'RELEASABLE'
-  | 'PAYOUT_PENDING'
-  | 'PAYOUT_FAILED'
-  | 'DISPUTED'
+  | 'PAYING_OUT'
   | 'COMPLETED'
+  | 'DISPUTED'
+  | 'REFUNDED'
   | 'EXPIRED'
 
+// Mirrors the backend's MilestoneStatus enum.
 export type MilestoneStatus =
   | 'PENDING'
   | 'IN_PROGRESS'
   | 'SUBMITTED'
-  | 'NEEDS_REVIEW'
+  | 'VERIFIED'
   | 'RELEASABLE'
+  | 'PAYING_OUT'
   | 'PAID'
-  | 'FAILED'
+  | 'REJECTED'
+  | 'DISPUTED'
 
 export type OutcomeState =
   | 'VERIFIED'
@@ -75,6 +77,8 @@ export interface TimelineEntry {
 }
 
 export interface NextAction {
+  /** Backend key, for example "confirm_receipt". Screens may switch on it. */
+  key?: string
   label: string
   waitingOn?: string
   tone?: 'primary' | 'danger'
@@ -97,4 +101,47 @@ export interface AgreementView {
   milestones: Milestone[]
   evidence: EvidenceEntry[]
   timeline: TimelineEntry[]
+}
+
+// ---------------------------------------------------------------- list, admin and receipt views
+
+export interface AgreementRow {
+  id: string
+  title: string
+  counterparty: string
+  amount: number
+  status: AgreementStatus
+  nextActionLabel: string
+  needsMyAction: boolean
+}
+
+export interface DisputeSide {
+  party: string
+  role: string
+  statement: string
+  evidence: EvidenceEntry[]
+}
+
+export interface AdminDispute {
+  id: string
+  agreementId: string
+  title: string
+  amount: number
+  openedAt: string
+  reason: string
+  status: 'OPEN' | 'RULED'
+  buyerSide: DisputeSide
+  sellerSide: DisputeSide
+}
+
+export interface Receipt {
+  agreementId: string
+  title: string
+  amount: number
+  payer: string
+  payee: string
+  pagaReference: string
+  payoutReference: string
+  completedAt: string
+  events: TimelineEntry[]
 }

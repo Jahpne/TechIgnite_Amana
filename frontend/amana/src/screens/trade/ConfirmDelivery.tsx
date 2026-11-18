@@ -13,9 +13,7 @@ import {
   TextArea,
   formatNaira,
 } from '../../ui'
-import type { AgreementStatus, AgreementView, PickedFile } from '../../ui'
-import { makeTrade } from '../../mocks/data'
-import { PreviewPanel, SelectControl } from './controls'
+import type { AgreementView, PickedFile } from '../../ui'
 import { MAX_PHOTO_BYTES, formatSize } from './shared'
 
 export interface ReportPayload {
@@ -103,7 +101,7 @@ export function ConfirmDelivery({
     )
   }
 
-  if (a.status !== 'DELIVERED') {
+  if (a.status !== 'EVIDENCE_IN') {
     return (
       <div className="grid gap-4">
         {header}
@@ -193,48 +191,6 @@ export function ConfirmDelivery({
         </p>
         <p>This cannot be undone. If something is wrong, choose Cancel and report a problem instead.</p>
       </ConfirmDialog>
-    </div>
-  )
-}
-
-type View = 'normal' | 'loading' | 'error'
-
-const statusOptions: { value: AgreementStatus; label: string }[] = [
-  { value: 'DELIVERED', label: 'Delivered' },
-  { value: 'IN_DELIVERY', label: 'In delivery (not yet)' },
-  { value: 'DISPUTED', label: 'Disputed' },
-  { value: 'COMPLETED', label: 'Completed' },
-]
-
-export function ConfirmDeliveryPreview() {
-  const [status, setStatus] = useState<AgreementStatus>('DELIVERED')
-  const [view, setView] = useState<View>('normal')
-
-  return (
-    <div className="grid gap-4">
-      <PreviewPanel>
-        <SelectControl label="State" value={status} options={statusOptions} onChange={setStatus} />
-        <SelectControl
-          label="View"
-          value={view}
-          options={[
-            { value: 'normal', label: 'Normal' },
-            { value: 'loading', label: 'Loading' },
-            { value: 'error', label: 'Error' },
-          ]}
-          onChange={setView}
-        />
-      </PreviewPanel>
-      <ConfirmDelivery
-        key={status}
-        agreement={makeTrade(status)}
-        autoReleaseAt="16 Nov, 15:45"
-        loading={view === 'loading'}
-        error={view === 'error' ? 'The server did not respond. Check your connection and try again.' : undefined}
-        onRetry={() => setView('normal')}
-        onConfirm={() => setStatus('COMPLETED')}
-        onReport={() => setStatus('DISPUTED')}
-      />
     </div>
   )
 }

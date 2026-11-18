@@ -1,11 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { SignInPreview } from '../screens/trade'
+import { SignInPage } from '../pages/SignInPage'
 import { ScreenFrame } from './-ScreenFrame'
 
 export const Route = createFileRoute('/signin')({
-  component: () => (
-    <ScreenFrame>
-      <SignInPreview />
-    </ScreenFrame>
-  ),
+  // ?next=/some/path is where to go after signing in.
+  validateSearch: (search: Record<string, unknown>): { next?: string } => ({
+    next: typeof search.next === 'string' ? search.next : undefined,
+  }),
+  component: function Page() {
+    const { next } = Route.useSearch()
+    return (
+      <ScreenFrame>
+        <SignInPage next={next} />
+      </ScreenFrame>
+    )
+  },
 })

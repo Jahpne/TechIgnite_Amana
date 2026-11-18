@@ -5,6 +5,8 @@
 
 import { motion, MotionConfig } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { getSession } from './auth/session'
+import { QuickSignIn } from './pages/QuickSignIn'
 
 const ctaBtn =
   'inline-flex min-h-12 items-center justify-center rounded-full bg-[#f26522] px-7 text-base font-bold text-white no-underline shadow-[0_10px_30px_-8px_rgba(242,101,34,0.7)] hover:bg-[#e0560f]'
@@ -181,8 +183,14 @@ export function Landing() {
               <a href="#trust" className="text-ink no-underline hover:text-brand">Why trust it</a>
             </nav>
             <div className="flex items-center gap-2">
-              <a href="/signin" className="px-3 py-2 text-base font-medium text-ink no-underline hover:text-brand">Log in</a>
-              <motion.a href="/signin" className={peachPill} {...press}>Sign up</motion.a>
+              {getSession() ? (
+                <motion.a href="/agreements" className={peachPill} {...press}>My agreements</motion.a>
+              ) : (
+                <>
+                  <a href="/signin" className="px-3 py-2 text-base font-medium text-ink no-underline hover:text-brand">Log in</a>
+                  <motion.a href="/signin" className={peachPill} {...press}>Sign up</motion.a>
+                </>
+              )}
             </div>
           </div>
         </motion.header>
@@ -228,6 +236,8 @@ export function Landing() {
             <PhoneCard />
           </div>
         </section>
+
+        <QuickSignIn />
 
         <section id="how" className="mt-14 overflow-hidden text-white" style={{ background: navyGradient }}>
           <div className="mx-auto grid max-w-5xl gap-12 px-4 py-24">
