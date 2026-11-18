@@ -1,6 +1,5 @@
 import { Button, Card, KeyValues, PageTitle, Timeline, formatNaira } from '../../ui'
-import type { Receipt as ReceiptData } from '../../mocks/data'
-import { receipt as mockReceipt } from '../../mocks/data'
+import type { Receipt as ReceiptData } from '../../ui'
 
 export interface ReceiptProps {
   receipt: ReceiptData
@@ -37,10 +36,6 @@ export function Receipt({ receipt, onPrint, onShare }: ReceiptProps) {
           <Timeline entries={receipt.events} />
         </section>
 
-        <p className="text-xs text-muted">
-          This receipt was issued on the Paga sandbox for a demo. No real money moved. Production use needs a
-          licensed or provider-held safeguarding arrangement.
-        </p>
       </Card>
 
       <div className="flex flex-wrap gap-2 print:hidden">
@@ -49,8 +44,4 @@ export function Receipt({ receipt, onPrint, onShare }: ReceiptProps) {
       </div>
     </div>
   )
-}
-
-export function ReceiptPreview() {
-  return <Receipt receipt={mockReceipt} onShare={() => undefined} />
 }

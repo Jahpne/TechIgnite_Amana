@@ -20,29 +20,18 @@ const toneBanner: Record<Tone, string> = {
   ai: 'bg-ai-soft text-ai border-ai',
 }
 
-export function SandboxBanner() {
-  return (
-    <div role="note" className="bg-warning-soft px-4 py-1.5 text-center text-xs font-semibold text-warning">
-      Demo runs on the Paga sandbox. No real money moves.
-    </div>
-  )
-}
-
 // Router-free page frame. Pass nav or user controls through `header`.
 export function AppShell({
   children,
   header,
   wide,
-  hideSandboxBanner,
 }: {
   children: ReactNode
   header?: ReactNode
   wide?: boolean
-  hideSandboxBanner?: boolean
 }) {
   return (
     <div className="flex min-h-dvh flex-col bg-page text-ink">
-      {!hideSandboxBanner && <SandboxBanner />}
       <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
         <div className="text-xl leading-tight font-extrabold tracking-tight text-brand">
           Amana

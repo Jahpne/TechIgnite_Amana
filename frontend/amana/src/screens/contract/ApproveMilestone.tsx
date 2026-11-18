@@ -7,7 +7,6 @@ import {
   ConditionChecklist,
   ConfirmDialog,
   EvidenceList,
-  FilterChips,
   KeyValues,
   OutcomeBadge,
   PageTitle,
@@ -16,7 +15,6 @@ import {
   outcomeState,
 } from '../../ui'
 import type { EvidenceEntry, Milestone, OutcomeState, Tone } from '../../ui'
-import { contractEvidence, milestoneDeploy } from '../../mocks/data'
 import { isGithubPrUrl } from './amounts'
 
 export type CiState = 'passed' | 'failed' | 'running' | 'none'
@@ -228,64 +226,6 @@ export function ApproveMilestone({
           }}
         />
       </ConfirmDialog>
-    </div>
-  )
-}
-
-const outcomeOptions: { value: OutcomeState; label: string }[] = [
-  { value: 'VERIFIED', label: 'Verified' },
-  { value: 'AWAITING_EVIDENCE', label: 'Awaiting evidence' },
-  { value: 'NEEDS_HUMAN_REVIEW', label: 'Needs human review' },
-  { value: 'FAILED', label: 'Failed' },
-  { value: 'DISPUTED', label: 'Disputed' },
-]
-
-const ciByOutcome: Record<OutcomeState, CiResult> = {
-  VERIFIED: { state: 'passed', summary: '14 of 14 checks passed.' },
-  AWAITING_EVIDENCE: { state: 'none', summary: 'No pull request submitted yet.' },
-  NEEDS_HUMAN_REVIEW: { state: 'running', summary: 'Checks could not be read automatically.' },
-  FAILED: { state: 'failed', summary: '2 of 14 checks failed.' },
-  DISPUTED: { state: 'passed', summary: '14 of 14 checks passed.' },
-}
-
-// Dev gallery wrapper: drives the screen from mocks with local state. Not used in production.
-export function ApproveMilestonePreview() {
-  const [outcome, setOutcome] = useState<OutcomeState>('VERIFIED')
-  const [decision, setDecision] = useState<'approved' | 'rejected' | undefined>()
-
-  // "Website deployed" needs tests AND client approval. Tests pass when the outcome is Verified.
-  const testsMet = outcome === 'VERIFIED'
-  const milestone: Milestone = {
-    ...milestoneDeploy,
-    status: 'SUBMITTED',
-    conditions: milestoneDeploy.conditions.map((c) => {
-      if (c.key === 'tests_pass') return { ...c, met: testsMet }
-      return { ...c, met: decision === 'approved' }
-    }),
-  }
-
-  return (
-    <div className="grid gap-4">
-      <FilterChips
-        label="Preview check result"
-        value={outcome}
-        onChange={(o) => {
-          setOutcome(o)
-          setDecision(undefined)
-        }}
-        options={outcomeOptions}
-      />
-      <ApproveMilestone
-        milestone={milestone}
-        freelancerName="David Mensah"
-        evidence={contractEvidence}
-        prUrl="https://github.com/david-mensah/grace-site/pull/12"
-        ci={ciByOutcome[outcome]}
-        outcome={outcome}
-        decision={decision}
-        onApprove={() => setDecision('approved')}
-        onReject={() => setDecision('rejected')}
-      />
     </div>
   )
 }

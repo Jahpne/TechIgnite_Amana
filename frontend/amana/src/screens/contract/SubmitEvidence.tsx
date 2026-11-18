@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Banner, Button, Card, ConfirmDialog, FileUpload, KeyValues, PageTitle, TextArea, TextField, formatNaira } from '../../ui'
 import type { PickedFile } from '../../ui'
-import { milestoneHomepage } from '../../mocks/data'
-import { EVIDENCE_LIMITS_TEXT, EVIDENCE_LIMITS, formatBytes, isGithubPrUrl, validateEvidenceFile } from './amounts'
+import { EVIDENCE_LIMITS_TEXT, isGithubPrUrl, } from './amounts'
 
 export interface SubmitEvidenceProps {
   milestoneTitle: string
@@ -140,48 +139,5 @@ export function SubmitEvidence({
         <p>It cannot be edited or deleted afterwards. If something is wrong, tell your client in the notes.</p>
       </ConfirmDialog>
     </div>
-  )
-}
-
-// Dev gallery wrapper: drives the screen from mocks with local state. Not used in production.
-export function SubmitEvidencePreview() {
-  const [prUrl, setPrUrl] = useState('')
-  const [notes, setNotes] = useState('')
-  const [files, setFiles] = useState<(PickedFile & { raw: File })[]>([])
-  const [fileError, setFileError] = useState<string | undefined>()
-  const [submitted, setSubmitted] = useState(false)
-
-  const pick = (list: FileList) => {
-    const next = [...files]
-    let error: string | undefined
-    for (const file of Array.from(list)) {
-      const problem = validateEvidenceFile(file)
-      if (problem) error = problem
-      else if (next.length >= EVIDENCE_LIMITS.maxFiles) error = `You can add up to ${EVIDENCE_LIMITS.maxFiles} files.`
-      else if (!next.some((f) => f.name === file.name)) next.push({ name: file.name, sizeLabel: formatBytes(file.size), raw: file })
-    }
-    setFiles(next)
-    setFileError(error)
-  }
-
-  return (
-    <SubmitEvidence
-      milestoneTitle={milestoneHomepage.title}
-      amount={milestoneHomepage.amount}
-      clientName="Grace Eze"
-      prUrl={prUrl}
-      onPrUrlChange={setPrUrl}
-      notes={notes}
-      onNotesChange={setNotes}
-      files={files}
-      onPickFiles={pick}
-      onRemoveFile={(name) => {
-        setFiles((f) => f.filter((x) => x.name !== name))
-        setFileError(undefined)
-      }}
-      fileError={fileError}
-      onSubmit={() => setSubmitted(true)}
-      submitted={submitted}
-    />
   )
 }

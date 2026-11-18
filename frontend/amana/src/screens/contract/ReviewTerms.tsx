@@ -5,16 +5,14 @@ import {
   Button,
   Card,
   ConfirmDialog,
-  FilterChips,
   LoadingState,
   NextActionPanel,
   PageTitle,
   formatNaira,
 } from '../../ui'
 import type { Party } from '../../ui'
-import { milestoneContract } from '../../mocks/data'
 import { TermsEditor } from './TermsEditor'
-import { checkSum, draftFromAgreement, draftIssues, draftsEqual } from './amounts'
+import { checkSum, draftIssues, } from './amounts'
 import type { TermsDraft } from './amounts'
 
 export interface ReviewTermsProps {
@@ -173,55 +171,6 @@ export function ReviewTerms({
         </p>
         <p>If anyone edits the terms later, this approval is cleared and you will be asked again.</p>
       </ConfirmDialog>
-    </div>
-  )
-}
-
-type PreviewRole = 'payer' | 'payee'
-
-// Dev gallery wrapper: drives the screen from mocks with local state. Not used in production.
-export function ReviewTermsPreview() {
-  const [saved, setSaved] = useState<TermsDraft>(() => draftFromAgreement(milestoneContract))
-  const [draft, setDraft] = useState<TermsDraft>(saved)
-  const [version, setVersion] = useState(1)
-  const [payer, setPayer] = useState<Party>({ ...milestoneContract.payer, approvedVersion: 1 })
-  const [payee, setPayee] = useState<Party>({ ...milestoneContract.payee, approvedVersion: undefined })
-  const [role, setRole] = useState<PreviewRole>('payee')
-  const [verifying, setVerifying] = useState(false)
-
-  const save = () => {
-    setSaved(draft)
-    setVersion((v) => v + 1)
-    setPayer((p) => ({ ...p, approvedVersion: undefined }))
-    setPayee((p) => ({ ...p, approvedVersion: undefined }))
-  }
-  const approve = () => (role === 'payer' ? setPayer({ ...payer, approvedVersion: version }) : setPayee({ ...payee, approvedVersion: version }))
-
-  return (
-    <div className="grid gap-4">
-      <FilterChips
-        label="Preview as"
-        value={role}
-        onChange={setRole}
-        options={[
-          { value: 'payee', label: 'Freelancer (David)' },
-          { value: 'payer', label: 'Client (Grace)' },
-        ]}
-      />
-      <ReviewTerms
-        draft={draft}
-        onDraftChange={setDraft}
-        version={version}
-        payer={payer}
-        payee={payee}
-        viewerRole={role}
-        dirty={!draftsEqual(saved, draft)}
-        aiGenerated
-        paymentVerifying={verifying}
-        onSave={save}
-        onApprove={approve}
-        onFund={() => setVerifying(true)}
-      />
     </div>
   )
 }

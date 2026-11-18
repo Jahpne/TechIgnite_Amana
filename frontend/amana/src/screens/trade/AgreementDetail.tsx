@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { } from 'react'
 import {
   ApprovalIndicator,
   Badge,
@@ -15,9 +15,7 @@ import {
   Timeline,
   formatNaira,
 } from '../../ui'
-import type { AgreementStatus, AgreementView, NextAction } from '../../ui'
-import { makeTrade, tradeNextAction, tradeStatuses } from '../../mocks/data'
-import { PreviewPanel, SelectControl } from './controls'
+import type { AgreementView, NextAction } from '../../ui'
 
 export type TradeRole = 'buyer' | 'seller'
 
@@ -53,7 +51,7 @@ export function AgreementDetail({
       <PageTitle title={a.title} subtitle={`With ${counterparty.name}`} />
 
       <div className="flex flex-wrap items-center gap-2">
-        <StatusBadge status={a.status} />
+        <StatusBadge status={a.status} type={a.type} />
         <Badge tone="neutral">{a.type === 'TRADE' ? 'Trade order' : 'Milestone contract'}</Badge>
         <Badge tone="neutral">Created via {a.createdVia === 'whatsapp' ? 'WhatsApp' : 'web'}</Badge>
       </div>
@@ -99,57 +97,6 @@ export function AgreementDetail({
       <Card title="Status timeline">
         <Timeline entries={a.timeline} />
       </Card>
-    </div>
-  )
-}
-
-type View = 'normal' | 'loading' | 'error'
-
-const statusOptions = tradeStatuses.map((s) => ({ value: s, label: s.replace('_', ' ').toLowerCase() }))
-
-/** Mock next action. Expired orders have no pending step, so the user is pointed back to their list. */
-function previewAction(status: AgreementStatus, role: TradeRole): NextAction {
-  if (status === 'EXPIRED') return { label: role === 'seller' ? 'Create a new order' : 'Back to my agreements' }
-  return tradeNextAction(status, role)
-}
-
-export function AgreementDetailPreview() {
-  const [status, setStatus] = useState<AgreementStatus>('FUNDED')
-  const [role, setRole] = useState<TradeRole>('seller')
-  const [view, setView] = useState<View>('normal')
-
-  return (
-    <div className="grid gap-4">
-      <PreviewPanel>
-        <SelectControl label="Status" value={status} options={statusOptions} onChange={setStatus} />
-        <SelectControl
-          label="Signed in as"
-          value={role}
-          options={[
-            { value: 'buyer', label: 'Buyer (Chioma)' },
-            { value: 'seller', label: 'Seller (Tunde)' },
-          ]}
-          onChange={setRole}
-        />
-        <SelectControl
-          label="View"
-          value={view}
-          options={[
-            { value: 'normal', label: 'Normal' },
-            { value: 'loading', label: 'Loading' },
-            { value: 'error', label: 'Error' },
-          ]}
-          onChange={setView}
-        />
-      </PreviewPanel>
-      <AgreementDetail
-        agreement={makeTrade(status)}
-        role={role}
-        nextAction={previewAction(status, role)}
-        loading={view === 'loading'}
-        error={view === 'error' ? 'The server did not respond. Check your connection and try again.' : undefined}
-        onRetry={() => setView('normal')}
-      />
     </div>
   )
 }

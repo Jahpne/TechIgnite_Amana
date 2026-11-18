@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Badge, Button, Card } from './primitives'
-import { agreementStatus, formatNaira, milestoneStatus, outcomeState } from './status'
+import { agreementStatusMeta, formatNaira, milestoneStatus, outcomeState } from './status'
 import type {
   AgreementStatus,
   EvidenceEntry,
@@ -11,8 +11,8 @@ import type {
   TimelineEntry,
 } from './types'
 
-export function StatusBadge({ status }: { status: AgreementStatus }) {
-  const m = agreementStatus[status]
+export function StatusBadge({ status, type }: { status: AgreementStatus; type?: 'TRADE' | 'MILESTONE' }) {
+  const m = agreementStatusMeta(status, type)
   return (
     <Badge tone={m.tone} icon={m.icon}>
       {m.label}
