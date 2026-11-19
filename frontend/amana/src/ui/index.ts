@@ -1,5 +1,6 @@
 export * from './auth-scene'
 export * from './primitives'
+export * from './new-agreement-menu'
 export * from './fields'
 export * from './agreement'
 export * from './overlay'
