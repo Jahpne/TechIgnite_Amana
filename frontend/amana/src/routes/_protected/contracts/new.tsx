@@ -5,7 +5,7 @@ import { ScreenFrame } from '../../-ScreenFrame'
 export const Route = createFileRoute('/_protected/contracts/new')({
   component: function Page() {
     return (
-      <ScreenFrame>
+      <ScreenFrame wide>
         <NewContractPage />
       </ScreenFrame>
     )
