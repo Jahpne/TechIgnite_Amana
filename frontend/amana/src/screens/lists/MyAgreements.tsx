@@ -6,6 +6,7 @@ import {
   ErrorState,
   FilterChips,
   LoadingState,
+  NewAgreementMenu,
   PageTitle,
   StatusBadge,
   formatNaira,
@@ -73,12 +74,7 @@ export function MyAgreements({
 }: MyAgreementsProps) {
   const [filter, setFilter] = useState<AgreementFilter>('all')
 
-  const entryPoints = (
-    <div className="flex flex-wrap gap-2">
-      <Button variant="primary" onClick={onCreateOrder}>Create an order</Button>
-      <Button onClick={onNewContract}>Start a contract</Button>
-    </div>
-  )
+  const entryPoints = <NewAgreementMenu onCreateOrder={onCreateOrder} onNewContract={onNewContract} />
 
   if (loading) {
     return (
@@ -121,13 +117,10 @@ export function MyAgreements({
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <PageTitle title="My agreements" subtitle="Everything you are part of, and what to do next." />
-        <div className="flex flex-wrap gap-2">
-          <Button variant="primary" onClick={onCreateOrder}>
-            Create an order
-          </Button>
-          <Button onClick={onNewContract}>Start a contract</Button>
+        <div className="min-w-0 flex-1">
+          <PageTitle title="My agreements" subtitle="Everything you are part of, and what to do next." />
         </div>
+        <NewAgreementMenu onCreateOrder={onCreateOrder} onNewContract={onNewContract} />
       </div>
       {needsPayoutAccount && onAddPayoutAccount && (
         <Banner tone="warning" title="We cannot pay you yet">
@@ -146,7 +139,7 @@ export function MyAgreements({
       {visible.length === 0 ? (
         <EmptyState title="Nothing here" description="No agreements match this filter." />
       ) : (
-        <ul className="grid gap-3 xl:grid-cols-2">
+        <ul className="grid gap-3">
           {visible.map((row) => (
             <li key={row.id}>
               <button
