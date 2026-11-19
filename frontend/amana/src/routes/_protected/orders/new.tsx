@@ -5,7 +5,7 @@ import { ScreenFrame } from '../../-ScreenFrame'
 export const Route = createFileRoute('/_protected/orders/new')({
   component: function Page() {
     return (
-      <ScreenFrame>
+      <ScreenFrame wide>
         <CreateOrderPage />
       </ScreenFrame>
     )
