@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as PlugIndexRouteImport } from './routes/plug/index'
+import { Route as PlugIdRouteImport } from './routes/plug/$id'
+import { Route as PlugSellRouteImport } from './routes/plug/sell'
 import { Route as ProtectedAdminDisputesRouteImport } from './routes/_protected/admin/disputes'
 import { Route as ProtectedAgreementsIndexRouteImport } from './routes/_protected/agreements/index'
 import { Route as ProtectedContractsNewRouteImport } from './routes/_protected/contracts/new'
@@ -37,6 +40,21 @@ const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlugIndexRoute = PlugIndexRouteImport.update({
+  id: '/plug/',
+  path: '/plug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlugIdRoute = PlugIdRouteImport.update({
+  id: '/plug/$id',
+  path: '/plug/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlugSellRoute = PlugSellRouteImport.update({
+  id: '/plug/sell',
+  path: '/plug/sell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProtectedAdminDisputesRoute = ProtectedAdminDisputesRouteImport.update({
@@ -110,6 +128,9 @@ const ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
+  '/plug/$id': typeof PlugIdRoute
+  '/plug/sell': typeof PlugSellRoute
+  '/plug/': typeof PlugIndexRoute
   '/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/contracts/new': typeof ProtectedContractsNewRoute
   '/o/$agreementId': typeof ProtectedOAgreementIdRoute
@@ -126,6 +147,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
+  '/plug/$id': typeof PlugIdRoute
+  '/plug/sell': typeof PlugSellRoute
+  '/plug': typeof PlugIndexRoute
   '/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/contracts/new': typeof ProtectedContractsNewRoute
   '/o/$agreementId': typeof ProtectedOAgreementIdRoute
@@ -144,6 +168,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/signin': typeof SigninRoute
+  '/plug/$id': typeof PlugIdRoute
+  '/plug/sell': typeof PlugSellRoute
+  '/plug/': typeof PlugIndexRoute
   '/_protected/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/_protected/contracts/new': typeof ProtectedContractsNewRoute
   '/_protected/o/$agreementId': typeof ProtectedOAgreementIdRoute
@@ -162,6 +189,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/signin'
+    | '/plug/$id'
+    | '/plug/sell'
+    | '/plug/'
     | '/admin/disputes'
     | '/contracts/new'
     | '/o/$agreementId'
@@ -178,6 +208,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/signin'
+    | '/plug/$id'
+    | '/plug/sell'
+    | '/plug'
     | '/admin/disputes'
     | '/contracts/new'
     | '/o/$agreementId'
@@ -195,6 +228,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/signin'
+    | '/plug/$id'
+    | '/plug/sell'
+    | '/plug/'
     | '/_protected/admin/disputes'
     | '/_protected/contracts/new'
     | '/_protected/o/$agreementId'
@@ -213,6 +249,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
   SigninRoute: typeof SigninRoute
+  PlugIdRoute: typeof PlugIdRoute
+  PlugSellRoute: typeof PlugSellRoute
+  PlugIndexRoute: typeof PlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -236,6 +275,27 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plug/': {
+      id: '/plug/'
+      path: '/plug'
+      fullPath: '/plug/'
+      preLoaderRoute: typeof PlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plug/$id': {
+      id: '/plug/$id'
+      path: '/plug/$id'
+      fullPath: '/plug/$id'
+      preLoaderRoute: typeof PlugIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plug/sell': {
+      id: '/plug/sell'
+      path: '/plug/sell'
+      fullPath: '/plug/sell'
+      preLoaderRoute: typeof PlugSellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_protected/admin/disputes': {
@@ -365,6 +425,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
   SigninRoute: SigninRoute,
+  PlugIdRoute: PlugIdRoute,
+  PlugSellRoute: PlugSellRoute,
+  PlugIndexRoute: PlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
