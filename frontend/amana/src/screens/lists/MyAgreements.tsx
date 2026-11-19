@@ -74,7 +74,7 @@ export function MyAgreements({
   const [filter, setFilter] = useState<AgreementFilter>('all')
 
   const entryPoints = (
-    <div className="flex flex-wrap justify-center gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button variant="primary" onClick={onCreateOrder}>Create an order</Button>
       <Button onClick={onNewContract}>Start a contract</Button>
     </div>
@@ -146,7 +146,7 @@ export function MyAgreements({
       {visible.length === 0 ? (
         <EmptyState title="Nothing here" description="No agreements match this filter." />
       ) : (
-        <ul className="grid gap-3">
+        <ul className="grid gap-3 xl:grid-cols-2">
           {visible.map((row) => (
             <li key={row.id}>
               <button
