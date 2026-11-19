@@ -8,6 +8,7 @@ import type {
   CompileInput,
   ConfirmInput,
   CreateMilestoneAgreementInput,
+  CreatePurchaseInput,
   CreateTradeInput,
   DisputeInput,
   PatchTermsInput,
@@ -36,6 +37,14 @@ export const getTimeline = (id: string) =>
 /** Seller creates a trade order. */
 export const createTrade = (body: CreateTradeInput) =>
   http.post<ApiAgreementBase>("/agreements", body).then((r) => r.data);
+
+/**
+ * Buyer starts an order from a published listing. Unlike createTrade the
+ * caller is the buyer, and the agreement comes back already AWAITING_PAYMENT
+ * with a holding account open, so the next screen is the payment one.
+ */
+export const createPurchase = (body: CreatePurchaseInput) =>
+  http.post<ApiAgreementBase>("/agreements/purchases", body).then((r) => r.data);
 
 /** Creates a milestone agreement, usually from compiled (and possibly edited) terms. */
 export const createMilestoneAgreement = (body: CreateMilestoneAgreementInput) =>

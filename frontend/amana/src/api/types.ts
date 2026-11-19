@@ -216,6 +216,20 @@ export interface CreateTradeInput {
   autoReleaseHours?: number;
 }
 
+export interface CreatePurchaseInput {
+  title: string;
+  amount: number;
+  sellerPhone: string;
+  currency?: string;
+  deliveryTerms?: string;
+  dropoffAddress?: string;
+  /** Which Plug listing this came from. */
+  listingRef?: string;
+  createdVia?: ApiChannel;
+  /** 1 to 168. */
+  autoReleaseHours?: number;
+}
+
 export interface MilestoneInput {
   title: string;
   amount: number;

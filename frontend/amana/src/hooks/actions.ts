@@ -5,6 +5,7 @@ import {
   compileAgreement,
   confirmAgreement,
   createMilestoneAgreement,
+  createPurchase,
   createTrade,
   openDispute,
   patchTerms,
@@ -15,6 +16,7 @@ import type {
   CompileInput,
   ConfirmInput,
   CreateMilestoneAgreementInput,
+  CreatePurchaseInput,
   CreateTradeInput,
   DisputeInput,
   MilestoneEvidenceInput,
@@ -37,6 +39,11 @@ function useRefresh(agreementId?: string) {
 export function useCreateTrade() {
   const refresh = useRefresh();
   return useMutation({ mutationFn: (b: CreateTradeInput) => createTrade(b), onSuccess: refresh });
+}
+
+export function useCreatePurchase() {
+  const refresh = useRefresh();
+  return useMutation({ mutationFn: (b: CreatePurchaseInput) => createPurchase(b), onSuccess: refresh });
 }
 
 export function useCreateMilestoneAgreement() {

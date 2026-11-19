@@ -1,10 +1,42 @@
-import { Link } from '@tanstack/react-router'
-import { Button, Card, formatNaira } from '../ui'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { nairaToKobo } from '../api/mappers'
+import { useCreatePurchase } from '../hooks/actions'
+import { useCurrentUser } from '../hooks/auth'
+import { errorMessage } from '../hooks/errors'
+import { Button, Card, ErrorState, formatNaira } from '../ui'
 import { findListing } from './data'
 import { PlugShell, ProtectedNote } from './PlugShell'
 
 export function ListingDetail({ id }: { id: string }) {
   const listing = findListing(id)
+  const navigate = useNavigate()
+  const me = useCurrentUser()
+  const buy = useCreatePurchase()
+  const signedIn = Boolean(me.data)
+
+  // Signed out, the listing is still worth reading, so sending the buyer to
+  // sign in carries them back here rather than dropping them on a dashboard.
+  function onBuy() {
+    if (!listing) return
+    if (!signedIn) {
+      void navigate({ to: '/signin', search: { next: `/plug/${listing.id}` } })
+      return
+    }
+    buy.mutate(
+      {
+        title: listing.title,
+        amount: nairaToKobo(listing.price),
+        sellerPhone: listing.sellerPhone,
+        listingRef: listing.id,
+        deliveryTerms: `Pickup from ${listing.location}. Buyer confirms receipt.`,
+      },
+      {
+        // The order comes back already awaiting payment, so this lands on the
+        // screen showing the account to pay into.
+        onSuccess: (agreement) => void navigate({ to: '/agreements/$id', params: { id: agreement.id } }),
+      },
+    )
+  }
 
   if (!listing) {
     return (
@@ -43,11 +75,13 @@ export function ListingDetail({ id }: { id: string }) {
               {formatNaira(listing.price)}
             </span>
             <ProtectedNote />
-            <Button variant="primary" block>
-              Buy with Amana
+            <Button variant="primary" block loading={buy.isPending} onClick={onBuy}>
+              {signedIn ? 'Buy with Amana' : 'Sign in to buy'}
             </Button>
+            {buy.isError && <ErrorState message={errorMessage(buy.error)} />}
             <p className="text-xs leading-relaxed text-muted">
-              You will review the terms before paying. Nothing is charged until you accept.
+              Your money goes to an account opened for this order. The seller is paid only once you
+              confirm you got it.
             </p>
           </Card>
 

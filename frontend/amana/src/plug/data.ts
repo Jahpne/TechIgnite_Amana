@@ -9,6 +9,8 @@ export interface Listing {
   title: string
   price: number
   seller: string
+  /** The seller's Amana number. A stub account is opened on the first sale. */
+  sellerPhone: string
   location: string
   category: Category
   /** Stands in for a photo until real uploads exist. */
@@ -33,6 +35,7 @@ export const LISTINGS: Listing[] = [
     title: 'Samsung Galaxy A54, 128GB',
     price: 180_000,
     seller: 'Tunde Electronics',
+    sellerPhone: '08130000201',
     location: 'Ikeja, Lagos',
     category: 'phones',
     emoji: '📱',
@@ -44,6 +47,7 @@ export const LISTINGS: Listing[] = [
     title: 'Nike Air Force 1, size 43',
     price: 45_000,
     seller: 'Kicks by Ada',
+    sellerPhone: '08130000202',
     location: 'Uyo, Akwa Ibom',
     category: 'fashion',
     emoji: '👟',
@@ -55,6 +59,7 @@ export const LISTINGS: Listing[] = [
     title: 'Wedding photography, full day',
     price: 250_000,
     seller: 'Grace Frames',
+    sellerPhone: '08130000203',
     location: 'Uyo, Akwa Ibom',
     category: 'services',
     emoji: '📷',
@@ -66,6 +71,7 @@ export const LISTINGS: Listing[] = [
     title: 'Shop shelving, built and installed',
     price: 180_000,
     seller: 'David Works',
+    sellerPhone: '08130000204',
     location: 'Ikeja, Lagos',
     category: 'services',
     emoji: '🪚',
@@ -77,6 +83,7 @@ export const LISTINGS: Listing[] = [
     title: 'MacBook Air M2, 256GB',
     price: 920_000,
     seller: 'Tunde Electronics',
+    sellerPhone: '08130000201',
     location: 'Ikeja, Lagos',
     category: 'phones',
     emoji: '💻',
@@ -88,6 +95,7 @@ export const LISTINGS: Listing[] = [
     title: 'Ankara two-piece, made to measure',
     price: 38_000,
     seller: 'Nneka Stitches',
+    sellerPhone: '08130000205',
     location: 'Aba, Abia',
     category: 'fashion',
     emoji: '🧵',
@@ -99,6 +107,7 @@ export const LISTINGS: Listing[] = [
     title: 'Glass centre table',
     price: 85_000,
     seller: 'Homebase NG',
+    sellerPhone: '08130000206',
     location: 'Port Harcourt',
     category: 'home',
     emoji: '🪑',
@@ -110,6 +119,7 @@ export const LISTINGS: Listing[] = [
     title: 'Small chops tray, serves 20',
     price: 25_000,
     seller: "Mama's Kitchen",
+    sellerPhone: '08130000207',
     location: 'Uyo, Akwa Ibom',
     category: 'food',
     emoji: '🍢',
