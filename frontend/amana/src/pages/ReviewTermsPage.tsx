@@ -65,6 +65,7 @@ function TermsEditor({ id, raw, view }: { id: string; raw: ApiAgreement; view: A
         dirty={!draftsEqual(saved, draft)}
         aiGenerated={raw.terms[0]?.aiGenerated ?? false}
         paymentVerifying={verifying && awaitingPayment}
+        onPaymentBack={() => setVerifying(false)}
         saving={patch.isPending}
         approving={approve.isPending}
         onSave={() =>

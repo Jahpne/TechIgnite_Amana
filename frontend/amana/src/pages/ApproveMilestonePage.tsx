@@ -11,10 +11,10 @@ import type { OutcomeState } from '../ui'
 const needsTests = (m: ApiMilestone) => m.conditionsJson.includes('tests_pass')
 
 function ciFor(m: ApiMilestone, hasGithub: boolean): CiResult {
-  if (!needsTests(m)) return { state: 'none', summary: 'This milestone does not need automated tests.' }
+  if (!needsTests(m)) return { state: 'none', summary: 'This milestone is checked by you, not by a machine.' }
   if (m.testsPassedAt) return { state: 'passed', summary: 'The automated checks passed.' }
   if (hasGithub) return { state: 'running', summary: 'Waiting for the automated checks to finish.' }
-  return { state: 'none', summary: 'No pull request has been submitted yet.' }
+  return { state: 'none', summary: 'No pull request has been submitted for the automated check yet.' }
 }
 
 function outcomeFor(m: ApiMilestone): OutcomeState {

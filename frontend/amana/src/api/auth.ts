@@ -1,7 +1,9 @@
 import { http } from "./client";
 
 export interface OtpRequestResult {
+  /** True when the code was delivered (by email). False when it was only logged on the server. */
   sent: boolean;
+  channel?: "email" | "log";
   /** Only returned while the backend runs with OTP_DEBUG=true. Never build UI that depends on it. */
   debugCode?: string;
 }
@@ -18,8 +20,9 @@ export interface VerifyResult {
   user: ApiUser;
 }
 
-export const requestOTP = (phone: string) =>
-  http.post<OtpRequestResult>("/auth/otp/request", { phone }).then((r) => r.data);
+/** Asks the backend to send a sign-in code. With an email it emails the code to that address. */
+export const requestOTP = (phone: string, email?: string) =>
+  http.post<OtpRequestResult>("/auth/otp/request", { phone, email }).then((r) => r.data);
 
 export const verifyOTP = (phone: string, code: string) =>
   http.post<VerifyResult>("/auth/otp/verify", { phone, code }).then((r) => r.data);

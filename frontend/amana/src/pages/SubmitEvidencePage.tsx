@@ -7,7 +7,8 @@ import { SubmitEvidence } from '../screens/contract/SubmitEvidence'
 import { Banner, ErrorState, LoadingState } from '../ui'
 import type { PickedFile } from '../ui'
 
-// S8. The freelancer submits a GitHub pull request link and notes.
+// S8. The freelancer submits a link to the work and/or files. A GitHub pull
+// request is recognised as a special case that also unlocks automated checks.
 // The backend only takes image LINKS, not file uploads, so picked files are not sent.
 export function SubmitEvidencePage({ id, milestoneId }: { id: string; milestoneId: string }) {
   const a = useAgreement(id)

@@ -12,11 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as SigninRouteImport } from './routes/signin'
+import { Route as PlugIndexRouteImport } from './routes/plug/index'
+import { Route as PlugIdRouteImport } from './routes/plug/$id'
+import { Route as PlugSellRouteImport } from './routes/plug/sell'
 import { Route as ProtectedAdminDisputesRouteImport } from './routes/_protected/admin/disputes'
 import { Route as ProtectedAgreementsIndexRouteImport } from './routes/_protected/agreements/index'
 import { Route as ProtectedContractsNewRouteImport } from './routes/_protected/contracts/new'
 import { Route as ProtectedOAgreementIdRouteImport } from './routes/_protected/o/$agreementId'
 import { Route as ProtectedOrdersNewRouteImport } from './routes/_protected/orders/new'
+import { Route as ProtectedPayoutsAccountRouteImport } from './routes/_protected/payouts/account'
 import { Route as ProtectedAgreementsIdIndexRouteImport } from './routes/_protected/agreements/$id/index'
 import { Route as ProtectedAgreementsIdConfirmRouteImport } from './routes/_protected/agreements/$id/confirm'
 import { Route as ProtectedAgreementsIdReceiptRouteImport } from './routes/_protected/agreements/$id/receipt'
@@ -36,6 +40,21 @@ const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlugIndexRoute = PlugIndexRouteImport.update({
+  id: '/plug/',
+  path: '/plug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlugIdRoute = PlugIdRouteImport.update({
+  id: '/plug/$id',
+  path: '/plug/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlugSellRoute = PlugSellRouteImport.update({
+  id: '/plug/sell',
+  path: '/plug/sell',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProtectedAdminDisputesRoute = ProtectedAdminDisputesRouteImport.update({
@@ -62,6 +81,11 @@ const ProtectedOAgreementIdRoute = ProtectedOAgreementIdRouteImport.update({
 const ProtectedOrdersNewRoute = ProtectedOrdersNewRouteImport.update({
   id: '/orders/new',
   path: '/orders/new',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
+const ProtectedPayoutsAccountRoute = ProtectedPayoutsAccountRouteImport.update({
+  id: '/payouts/account',
+  path: '/payouts/account',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
 const ProtectedAgreementsIdIndexRoute =
@@ -104,10 +128,14 @@ const ProtectedAgreementsIdMilestonesMilestoneIdReviewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
+  '/plug/$id': typeof PlugIdRoute
+  '/plug/sell': typeof PlugSellRoute
+  '/plug/': typeof PlugIndexRoute
   '/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/contracts/new': typeof ProtectedContractsNewRoute
   '/o/$agreementId': typeof ProtectedOAgreementIdRoute
   '/orders/new': typeof ProtectedOrdersNewRoute
+  '/payouts/account': typeof ProtectedPayoutsAccountRoute
   '/agreements/': typeof ProtectedAgreementsIndexRoute
   '/agreements/$id/confirm': typeof ProtectedAgreementsIdConfirmRoute
   '/agreements/$id/receipt': typeof ProtectedAgreementsIdReceiptRoute
@@ -119,10 +147,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signin': typeof SigninRoute
+  '/plug/$id': typeof PlugIdRoute
+  '/plug/sell': typeof PlugSellRoute
+  '/plug': typeof PlugIndexRoute
   '/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/contracts/new': typeof ProtectedContractsNewRoute
   '/o/$agreementId': typeof ProtectedOAgreementIdRoute
   '/orders/new': typeof ProtectedOrdersNewRoute
+  '/payouts/account': typeof ProtectedPayoutsAccountRoute
   '/agreements': typeof ProtectedAgreementsIndexRoute
   '/agreements/$id/confirm': typeof ProtectedAgreementsIdConfirmRoute
   '/agreements/$id/receipt': typeof ProtectedAgreementsIdReceiptRoute
@@ -136,10 +168,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/signin': typeof SigninRoute
+  '/plug/$id': typeof PlugIdRoute
+  '/plug/sell': typeof PlugSellRoute
+  '/plug/': typeof PlugIndexRoute
   '/_protected/admin/disputes': typeof ProtectedAdminDisputesRoute
   '/_protected/contracts/new': typeof ProtectedContractsNewRoute
   '/_protected/o/$agreementId': typeof ProtectedOAgreementIdRoute
   '/_protected/orders/new': typeof ProtectedOrdersNewRoute
+  '/_protected/payouts/account': typeof ProtectedPayoutsAccountRoute
   '/_protected/agreements/': typeof ProtectedAgreementsIndexRoute
   '/_protected/agreements/$id/confirm': typeof ProtectedAgreementsIdConfirmRoute
   '/_protected/agreements/$id/receipt': typeof ProtectedAgreementsIdReceiptRoute
@@ -153,10 +189,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/signin'
+    | '/plug/$id'
+    | '/plug/sell'
+    | '/plug/'
     | '/admin/disputes'
     | '/contracts/new'
     | '/o/$agreementId'
     | '/orders/new'
+    | '/payouts/account'
     | '/agreements/'
     | '/agreements/$id/confirm'
     | '/agreements/$id/receipt'
@@ -168,10 +208,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/signin'
+    | '/plug/$id'
+    | '/plug/sell'
+    | '/plug'
     | '/admin/disputes'
     | '/contracts/new'
     | '/o/$agreementId'
     | '/orders/new'
+    | '/payouts/account'
     | '/agreements'
     | '/agreements/$id/confirm'
     | '/agreements/$id/receipt'
@@ -184,10 +228,14 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/signin'
+    | '/plug/$id'
+    | '/plug/sell'
+    | '/plug/'
     | '/_protected/admin/disputes'
     | '/_protected/contracts/new'
     | '/_protected/o/$agreementId'
     | '/_protected/orders/new'
+    | '/_protected/payouts/account'
     | '/_protected/agreements/'
     | '/_protected/agreements/$id/confirm'
     | '/_protected/agreements/$id/receipt'
@@ -201,6 +249,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
   SigninRoute: typeof SigninRoute
+  PlugIdRoute: typeof PlugIdRoute
+  PlugSellRoute: typeof PlugSellRoute
+  PlugIndexRoute: typeof PlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -224,6 +275,27 @@ declare module '@tanstack/react-router' {
       path: '/signin'
       fullPath: '/signin'
       preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plug/': {
+      id: '/plug/'
+      path: '/plug'
+      fullPath: '/plug/'
+      preLoaderRoute: typeof PlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plug/$id': {
+      id: '/plug/$id'
+      path: '/plug/$id'
+      fullPath: '/plug/$id'
+      preLoaderRoute: typeof PlugIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plug/sell': {
+      id: '/plug/sell'
+      path: '/plug/sell'
+      fullPath: '/plug/sell'
+      preLoaderRoute: typeof PlugSellRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_protected/admin/disputes': {
@@ -259,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/orders/new'
       fullPath: '/orders/new'
       preLoaderRoute: typeof ProtectedOrdersNewRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/payouts/account': {
+      id: '/_protected/payouts/account'
+      path: '/payouts/account'
+      fullPath: '/payouts/account'
+      preLoaderRoute: typeof ProtectedPayoutsAccountRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
     '/_protected/agreements/$id/': {
@@ -311,6 +390,7 @@ interface ProtectedRouteRouteChildren {
   ProtectedContractsNewRoute: typeof ProtectedContractsNewRoute
   ProtectedOAgreementIdRoute: typeof ProtectedOAgreementIdRoute
   ProtectedOrdersNewRoute: typeof ProtectedOrdersNewRoute
+  ProtectedPayoutsAccountRoute: typeof ProtectedPayoutsAccountRoute
   ProtectedAgreementsIndexRoute: typeof ProtectedAgreementsIndexRoute
   ProtectedAgreementsIdConfirmRoute: typeof ProtectedAgreementsIdConfirmRoute
   ProtectedAgreementsIdReceiptRoute: typeof ProtectedAgreementsIdReceiptRoute
@@ -325,6 +405,7 @@ const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedContractsNewRoute: ProtectedContractsNewRoute,
   ProtectedOAgreementIdRoute: ProtectedOAgreementIdRoute,
   ProtectedOrdersNewRoute: ProtectedOrdersNewRoute,
+  ProtectedPayoutsAccountRoute: ProtectedPayoutsAccountRoute,
   ProtectedAgreementsIndexRoute: ProtectedAgreementsIndexRoute,
   ProtectedAgreementsIdConfirmRoute: ProtectedAgreementsIdConfirmRoute,
   ProtectedAgreementsIdReceiptRoute: ProtectedAgreementsIdReceiptRoute,
@@ -344,6 +425,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
   SigninRoute: SigninRoute,
+  PlugIdRoute: PlugIdRoute,
+  PlugSellRoute: PlugSellRoute,
+  PlugIndexRoute: PlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

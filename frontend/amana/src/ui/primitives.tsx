@@ -3,16 +3,25 @@ import type { Tone } from './types'
 
 // Full literal class strings so Tailwind can detect every class.
 const toneBadge: Record<Tone, string> = {
-  neutral: 'bg-surface-2 text-muted',
-  info: 'bg-info-soft text-info',
-  success: 'bg-success-soft text-success',
-  warning: 'bg-warning-soft text-warning',
-  danger: 'bg-danger-soft text-danger',
-  ai: 'bg-ai-soft text-ai',
+  neutral: 'bg-surface-2 text-muted ring-line',
+  info: 'bg-info-soft text-info ring-info/20',
+  success: 'bg-success-soft text-success ring-success/20',
+  warning: 'bg-warning-soft text-warning ring-warning/20',
+  danger: 'bg-danger-soft text-danger ring-danger/20',
+  ai: 'bg-ai-soft text-ai ring-ai/20',
+}
+
+const toneDot: Record<Tone, string> = {
+  neutral: 'bg-muted',
+  info: 'bg-info',
+  success: 'bg-success',
+  warning: 'bg-warning',
+  danger: 'bg-danger',
+  ai: 'bg-ai',
 }
 
 const toneBanner: Record<Tone, string> = {
-  neutral: 'bg-surface-2 text-ink border-line',
+  neutral: 'bg-surface-2 text-ink border-line-strong',
   info: 'bg-info-soft text-info border-info',
   success: 'bg-success-soft text-success border-success',
   warning: 'bg-warning-soft text-warning border-warning',
@@ -32,15 +41,31 @@ export function AppShell({
 }) {
   return (
     <div className="flex min-h-dvh flex-col bg-page text-ink">
-      <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
-        <div className="text-xl leading-tight font-extrabold tracking-tight text-brand">
-          Amana
-          <small className="block text-[0.7rem] font-medium tracking-wider text-muted">Agree. Verify. Pay.</small>
+      <header className="sticky top-0 z-20 border-b border-line/80 bg-page/85 backdrop-blur-md">
+        <div
+          className={`mx-auto flex w-full items-center justify-between gap-3 px-4 py-3 ${
+            wide ? 'max-w-5xl' : 'max-w-xl'
+          }`}
+        >
+          <div className="flex items-center gap-2.5">
+            <span
+              aria-hidden="true"
+              className="grid size-9 place-items-center rounded-xl bg-brand text-base font-extrabold text-on-brand"
+            >
+              a
+            </span>
+            <span className="leading-none">
+              <span className="block font-display text-lg font-extrabold tracking-tight">Amana</span>
+              <small className="block text-[0.68rem] font-semibold tracking-[0.14em] text-muted uppercase">
+                Agree · Verify · Pay
+              </small>
+            </span>
+          </div>
+          {header}
         </div>
-        {header}
       </header>
       <main
-        className={`mx-auto grid w-full content-start gap-4 p-4 ${wide ? 'max-w-5xl' : 'max-w-xl'}`}
+        className={`mx-auto grid w-full content-start gap-5 px-4 pt-6 pb-16 ${wide ? 'max-w-5xl' : 'max-w-xl'}`}
       >
         {children}
       </main>
@@ -50,9 +75,9 @@ export function AppShell({
 
 export function PageTitle({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div className="grid gap-1">
-      <h1 className="text-2xl leading-tight font-bold">{title}</h1>
-      {subtitle && <p className="text-sm text-muted">{subtitle}</p>}
+    <div className="grid gap-1.5">
+      <h1 className="font-display text-[1.75rem] leading-[1.15] font-extrabold">{title}</h1>
+      {subtitle && <p className="text-[0.95rem] leading-relaxed text-muted">{subtitle}</p>}
     </div>
   )
 }
@@ -67,8 +92,10 @@ export function Card({
   className?: string
 }) {
   return (
-    <section className={`grid gap-3 rounded-xl border border-line bg-surface p-4 shadow-sm ${className}`}>
-      {title && <h2 className="text-lg leading-snug font-semibold">{title}</h2>}
+    <section
+      className={`grid gap-3.5 rounded-2xl border border-line bg-surface p-5 shadow-card ${className}`}
+    >
+      {title && <h2 className="font-display text-[1.0625rem] leading-snug font-bold">{title}</h2>}
       {children}
     </section>
   )
@@ -88,10 +115,10 @@ export function KeyValues({ items }: { items: [string, ReactNode][] }) {
 }
 
 const buttonVariant = {
-  default: 'border-line bg-surface text-ink hover:bg-surface-2',
-  primary: 'border-brand bg-brand text-on-brand hover:bg-brand-strong hover:border-brand-strong',
-  danger: 'border-danger bg-danger-soft text-danger hover:brightness-95',
-  ghost: 'border-transparent bg-transparent text-ink hover:bg-surface-2',
+  default: 'border-line-strong bg-surface text-ink hover:bg-surface-2 hover:border-brand-ring',
+  primary: 'border-transparent bg-brand text-on-brand hover:bg-brand-strong',
+  danger: 'border-danger/30 bg-danger-soft text-danger hover:bg-danger hover:text-on-brand',
+  ghost: 'border-transparent bg-transparent text-muted hover:bg-surface-2 hover:text-ink',
 } as const
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -123,7 +150,7 @@ export function Button({
       type="button"
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-4 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${buttonVariant[variant]} ${block ? 'w-full' : ''} ${className}`}
+      className={`inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border px-5 font-bold transition-all duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 ${buttonVariant[variant]} ${block ? 'w-full' : ''} ${className}`}
       {...rest}
     >
       {loading && <Spinner />}
@@ -135,9 +162,13 @@ export function Button({
 export function Badge({ tone, icon, children }: { tone: Tone; icon?: string; children: ReactNode }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold whitespace-nowrap ${toneBadge[tone]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.7rem] font-bold tracking-wide whitespace-nowrap uppercase ring-1 ring-inset ${toneBadge[tone]}`}
     >
-      {icon && <span aria-hidden="true">{icon}</span>}
+      {icon ? (
+        <span aria-hidden="true">{icon}</span>
+      ) : (
+        <span aria-hidden="true" className={`size-1.5 rounded-full ${toneDot[tone]}`} />
+      )}
       {children}
     </span>
   )
@@ -147,10 +178,10 @@ export function Banner({ tone, title, children }: { tone: Tone; title?: string; 
   return (
     <div
       role={tone === 'danger' ? 'alert' : 'status'}
-      className={`flex gap-3 rounded-lg border-l-4 px-4 py-3 text-sm ${toneBanner[tone]}`}
+      className={`flex gap-3 rounded-xl border-l-4 px-4 py-3.5 text-sm leading-relaxed ${toneBanner[tone]}`}
     >
       <div>
-        {title && <strong className="block">{title}</strong>}
+        {title && <strong className="mb-0.5 block font-bold">{title}</strong>}
         {children}
       </div>
     </div>
@@ -185,7 +216,7 @@ export function FilterChips<T extends string>({
   label: string
 }) {
   return (
-    <div role="group" aria-label={label} className="flex gap-2 overflow-x-auto pb-1">
+    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
       {options.map((o) => {
         const active = o.value === value
         return (
@@ -194,8 +225,10 @@ export function FilterChips<T extends string>({
             type="button"
             aria-pressed={active}
             onClick={() => onChange(o.value)}
-            className={`min-h-11 cursor-pointer rounded-full border px-4 text-sm font-semibold whitespace-nowrap ${
-              active ? 'border-brand bg-brand text-on-brand' : 'border-line bg-surface text-ink hover:bg-surface-2'
+            className={`min-h-10 cursor-pointer rounded-full border px-4 text-sm font-bold whitespace-nowrap transition-colors ${
+              active
+                ? 'border-transparent bg-ink text-on-brand'
+                : 'border-line bg-surface text-muted hover:border-brand-ring hover:text-ink'
             }`}
           >
             {o.label}

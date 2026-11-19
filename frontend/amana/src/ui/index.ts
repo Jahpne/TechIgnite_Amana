@@ -1,3 +1,4 @@
+export * from './auth-scene'
 export * from './primitives'
 export * from './fields'
 export * from './agreement'

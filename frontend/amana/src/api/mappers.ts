@@ -239,11 +239,23 @@ export function toAgreementView(a: ApiAgreement, timeline: TimelineEntry[] = [])
   };
 }
 
-/** The account the buyer pays into, once both parties have approved. Null until then. */
-export function toFundingAccount(a: ApiAgreement): { accountNumber: string; amount: number } | null {
+/**
+ * The account the buyer pays into, once both parties have approved. Null until
+ * then. A transfer needs the bank and the account name as well as the number —
+ * nobody can complete one from a number alone.
+ */
+export function toFundingAccount(
+  a: ApiAgreement,
+): { accountNumber: string; accountName: string; bankName: string; amount: number } | null {
   const payment = a.payments.find((p) => p.virtualAccountNumber !== null);
   if (!payment || payment.virtualAccountNumber === null) return null;
-  return { accountNumber: payment.virtualAccountNumber, amount: koboToNaira(payment.amount) };
+  return {
+    accountNumber: payment.virtualAccountNumber,
+    // Matches the name the backend registers with Paga.
+    accountName: `Amana · ${a.title}`.slice(0, 100),
+    bankName: 'Paga',
+    amount: koboToNaira(payment.amount),
+  };
 }
 
 // ------------------------------------------------------------------ list rows, receipt, admin

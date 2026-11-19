@@ -152,6 +152,19 @@ export function validateEvidenceFile(file: { name: string; size: number; type: s
 }
 
 /** True for https://github.com/<owner>/<repo>/pull/<number>, optionally followed by a sub-page. */
+/**
+ * Any https link to the work: a published site, a Figma file, a Drive folder,
+ * a GitHub pull request. Amana is for every kind of service, so the link field
+ * must not assume software.
+ */
+export function isWorkLink(value: string): boolean {
+  try {
+    return new URL(value.trim()).protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export function isGithubPrUrl(value: string): boolean {
   let url: URL
   try {

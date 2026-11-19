@@ -4,8 +4,8 @@ import type { ReactNode } from 'react'
 // to ignore this file, so it is not turned into a route.
 export function ScreenFrame({ children, wide }: { children: ReactNode; wide?: boolean }) {
   return (
-    <main className={`mx-auto grid w-full content-start gap-4 p-4 ${wide ? 'max-w-4xl' : 'max-w-xl'}`}>
+    <div className={`mx-auto grid w-full content-start gap-5 px-4 pt-6 pb-10 ${wide ? 'max-w-5xl' : 'max-w-2xl'}`}>
       {children}
-    </main>
+    </div>
   )
 }

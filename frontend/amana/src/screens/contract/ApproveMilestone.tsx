@@ -15,7 +15,7 @@ import {
   outcomeState,
 } from '../../ui'
 import type { EvidenceEntry, Milestone, OutcomeState, Tone } from '../../ui'
-import { isGithubPrUrl } from './amounts'
+import { isGithubPrUrl, isWorkLink } from './amounts'
 
 export type CiState = 'passed' | 'failed' | 'running' | 'none'
 
@@ -143,8 +143,8 @@ export function ApproveMilestone({
         </div>
         {prUrl && (
           <p className="text-sm break-all">
-            Pull request:{' '}
-            {isGithubPrUrl(prUrl) ? (
+            {isGithubPrUrl(prUrl) ? 'Pull request' : 'Link to the work'}:{' '}
+            {isWorkLink(prUrl) ? (
               <a href={prUrl} target="_blank" rel="noopener noreferrer" className="font-semibold">
                 {prUrl.replace(/^https:\/\//, '')}
               </a>
