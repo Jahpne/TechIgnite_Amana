@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import {
+  PaymentWaiting,
   ApprovalIndicator,
   Banner,
   Button,
   Card,
   ConfirmDialog,
-  LoadingState,
   NextActionPanel,
   PageTitle,
   formatNaira,
@@ -30,6 +30,8 @@ export interface ReviewTermsProps {
   aiGenerated: boolean
   /** Paga checkout was opened and the backend has not confirmed funding yet. */
   paymentVerifying?: boolean
+  /** Returns the payer to the account details when the wait drags on. */
+  onPaymentBack?: () => void
   onSave: () => void
   onApprove: () => void
   onFund: () => void
@@ -49,6 +51,7 @@ export function ReviewTerms({
   dirty,
   aiGenerated,
   paymentVerifying,
+  onPaymentBack,
   onSave,
   onApprove,
   onFund,
@@ -120,10 +123,7 @@ export function ReviewTerms({
       )}
 
       {paymentVerifying ? (
-        <Card>
-          <LoadingState label="Verifying payment with Paga…" />
-          <p className="text-center text-xs text-muted">You can leave this page. We will notify you when funding is confirmed.</p>
-        </Card>
+        <PaymentWaiting onBack={onPaymentBack} />
       ) : dirty ? (
         <Button variant="primary" block loading={saving} disabled={!valid} onClick={handleSave}>
           Save changes as version {version + 1}
