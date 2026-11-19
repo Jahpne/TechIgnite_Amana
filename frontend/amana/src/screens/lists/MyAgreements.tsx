@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  Banner,
   Button,
   EmptyState,
   ErrorState,
@@ -53,10 +54,23 @@ export interface MyAgreementsProps {
   onOpen: (id: string) => void
   onCreateOrder: () => void
   onNewContract: () => void
+  /** True when this user could be owed money but has no account on file. */
+  needsPayoutAccount?: boolean
+  onAddPayoutAccount?: () => void
 }
 
 // S10. Presentational: the logic layer supplies rows and handles navigation.
-export function MyAgreements({ rows, loading, error, onRetry, onOpen, onCreateOrder, onNewContract }: MyAgreementsProps) {
+export function MyAgreements({
+  rows,
+  loading,
+  error,
+  onRetry,
+  onOpen,
+  onCreateOrder,
+  onNewContract,
+  needsPayoutAccount,
+  onAddPayoutAccount,
+}: MyAgreementsProps) {
   const [filter, setFilter] = useState<AgreementFilter>('all')
 
   const entryPoints = (
@@ -102,10 +116,32 @@ export function MyAgreements({ rows, loading, error, onRetry, onOpen, onCreateOr
     label: `${label} (${rows.filter((r) => matchesFilter(r, value)).length})`,
   }))
   const visible = rows.filter((r) => matchesFilter(r, filter))
+  const needsAction = rows.filter((r) => r.needsMyAction).length
 
   return (
     <>
-      <PageTitle title="My agreements" subtitle="Everything you are part of, and what to do next." />
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <PageTitle title="My agreements" subtitle="Everything you are part of, and what to do next." />
+        <div className="flex flex-wrap gap-2">
+          <Button variant="primary" onClick={onCreateOrder}>
+            Create an order
+          </Button>
+          <Button onClick={onNewContract}>Start a contract</Button>
+        </div>
+      </div>
+      {needsPayoutAccount && onAddPayoutAccount && (
+        <Banner tone="warning" title="We cannot pay you yet">
+          <p className="mb-2">
+            Money is sent by bank transfer, so we need your account before anything can be released to you.
+          </p>
+          <Button onClick={onAddPayoutAccount}>Add your bank account</Button>
+        </Banner>
+      )}
+      {needsAction > 0 && (
+        <p className="text-sm font-bold text-brand">
+          {needsAction === 1 ? '1 agreement needs you' : `${needsAction} agreements need you`}.
+        </p>
+      )}
       <FilterChips label="Filter agreements by status" options={options} value={filter} onChange={setFilter} />
       {visible.length === 0 ? (
         <EmptyState title="Nothing here" description="No agreements match this filter." />
@@ -116,18 +152,30 @@ export function MyAgreements({ rows, loading, error, onRetry, onOpen, onCreateOr
               <button
                 type="button"
                 onClick={() => onOpen(row.id)}
-                className="grid min-h-11 w-full cursor-pointer gap-2 rounded-xl border border-line bg-surface p-4 text-left shadow-sm hover:bg-surface-2"
+                className="group grid w-full cursor-pointer gap-3 rounded-2xl border border-line bg-surface p-4 text-left shadow-card transition-all hover:-translate-y-px hover:border-brand-ring sm:p-5"
               >
-                <span className="flex items-start justify-between gap-3">
-                  <span className="min-w-0">
-                    <span className="block font-semibold break-words">{row.title}</span>
+                <span className="flex items-start justify-between gap-4">
+                  <span className="min-w-0 grid gap-1">
+                    <span className="block font-display text-[1.0625rem] leading-snug font-bold break-words">
+                      {row.title}
+                    </span>
                     <span className="block text-sm text-muted">With {row.counterparty}</span>
                   </span>
-                  <span className="font-extrabold tabular-nums">{formatNaira(row.amount)}</span>
+                  <span className="shrink-0 text-right">
+                    <span className="block font-display text-xl leading-none font-extrabold tabular-nums">
+                      {formatNaira(row.amount)}
+                    </span>
+                  </span>
                 </span>
-                <span className="flex flex-wrap items-center justify-between gap-2">
+
+                <span className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3">
                   <StatusBadge status={row.status} />
-                  <span className={`text-sm ${row.needsMyAction ? 'font-bold text-brand' : 'text-muted'}`}>
+                  <span
+                    className={`inline-flex items-center gap-1.5 text-sm ${
+                      row.needsMyAction ? 'font-bold text-brand' : 'text-muted'
+                    }`}
+                  >
+                    {row.needsMyAction && <span aria-hidden="true">→</span>}
                     {row.needsMyAction ? 'Your turn: ' : ''}
                     {row.nextActionLabel}
                   </span>

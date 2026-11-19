@@ -6,7 +6,7 @@ export const Route = createFileRoute('/_protected/agreements/$id/')({
   component: function Page() {
     const { id } = Route.useParams()
     return (
-      <ScreenFrame>
+      <ScreenFrame wide>
         <AgreementDetailPage id={id} />
       </ScreenFrame>
     )
