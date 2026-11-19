@@ -50,7 +50,7 @@ export function AppShell({
           <div className="flex items-center gap-2.5">
             <span
               aria-hidden="true"
-              className="grid size-9 place-items-center rounded-xl bg-brand text-base font-extrabold text-on-brand shadow-brand"
+              className="grid size-9 place-items-center rounded-xl bg-brand text-base font-extrabold text-on-brand"
             >
               a
             </span>
@@ -115,9 +115,8 @@ export function KeyValues({ items }: { items: [string, ReactNode][] }) {
 }
 
 const buttonVariant = {
-  default: 'border-line-strong bg-surface text-ink shadow-card hover:bg-surface-2 hover:border-brand-ring',
-  primary:
-    'border-transparent bg-brand text-on-brand shadow-brand hover:bg-brand-strong',
+  default: 'border-line-strong bg-surface text-ink hover:bg-surface-2 hover:border-brand-ring',
+  primary: 'border-transparent bg-brand text-on-brand hover:bg-brand-strong',
   danger: 'border-danger/30 bg-danger-soft text-danger hover:bg-danger hover:text-on-brand',
   ghost: 'border-transparent bg-transparent text-muted hover:bg-surface-2 hover:text-ink',
 } as const
@@ -151,7 +150,7 @@ export function Button({
       type="button"
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border px-5 font-bold transition-all duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none ${buttonVariant[variant]} ${block ? 'w-full' : ''} ${className}`}
+      className={`inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border px-5 font-bold transition-all duration-150 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50 ${buttonVariant[variant]} ${block ? 'w-full' : ''} ${className}`}
       {...rest}
     >
       {loading && <Spinner />}
