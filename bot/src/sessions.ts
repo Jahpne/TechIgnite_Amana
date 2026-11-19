@@ -1,0 +1,68 @@
+export interface Turn {
+  role: 'user' | 'assistant'
+  text: string
+}
+
+/** An action the assistant asked for. It runs only when the person replies 1. */
+export interface Pending {
+  /** What will happen, written by the bot (not by the AI) from the checked details. */
+  summary: string
+  run: (token: string) => Promise<string>
+  createdAt: number
+}
+
+export interface Login {
+  step: 'idle' | 'awaiting_email' | 'awaiting_code'
+  /** The masked address the code was sent to. */
+  sentTo?: string
+  codeRequestedAt: number
+  wrongCodes: number
+}
+
+export interface Person {
+  token?: string
+  tokenAt: number
+  login: Login
+  pending?: Pending
+  history: Turn[]
+  recent: number[]
+}
+
+/** Sign-in tokens last 7 days on the backend. Ask again a day early. */
+export const TOKEN_TTL_MS = 6 * 24 * 60 * 60 * 1000
+export const PENDING_TTL_MS = 10 * 60 * 1000
+const HISTORY_TURNS = 8
+
+/** Kept in memory only. A restart means everyone signs in again, and no token is ever written to disk. */
+const people = new Map<string, Person>()
+
+export function personFor(phone: string): Person {
+  let person = people.get(phone)
+  if (!person) {
+    person = { tokenAt: 0, login: { step: 'idle', codeRequestedAt: 0, wrongCodes: 0 }, history: [], recent: [] }
+    people.set(phone, person)
+  }
+  return person
+}
+
+export function isSignedIn(person: Person): boolean {
+  return person.token !== undefined && Date.now() - person.tokenAt < TOKEN_TTL_MS
+}
+
+export function signOut(person: Person): void {
+  person.token = undefined
+  person.pending = undefined
+  person.login = { step: 'idle', codeRequestedAt: 0, wrongCodes: 0 }
+}
+
+export function remember(person: Person, user: string, bot: string): void {
+  person.history.push({ role: 'user', text: user }, { role: 'assistant', text: bot })
+  person.history = person.history.slice(-HISTORY_TURNS)
+}
+
+export class SessionExpired extends Error {
+  constructor() {
+    super('The sign-in has expired.')
+    this.name = 'SessionExpired'
+  }
+}
