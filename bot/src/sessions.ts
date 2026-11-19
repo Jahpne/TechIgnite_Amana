@@ -5,9 +5,11 @@ export interface Turn {
 
 /** An action the assistant asked for. It runs only when the person replies 1. */
 export interface Pending {
+  /** The tool and its arguments. Plain data, so it can be stored. The bot re-checks them when the person replies 1. */
+  tool: string
+  args: Record<string, unknown>
   /** What will happen, written by the bot (not by the AI) from the checked details. */
   summary: string
-  run: (token: string) => Promise<string>
   createdAt: number
 }
 
@@ -35,16 +37,8 @@ export const TOKEN_TTL_MS = 6 * 24 * 60 * 60 * 1000
 export const PENDING_TTL_MS = 10 * 60 * 1000
 const HISTORY_TURNS = 8
 
-/** Kept in memory only. A restart means everyone signs in again, and no token is ever written to disk. */
-const people = new Map<string, Person>()
-
-export function personFor(phone: string): Person {
-  let person = people.get(phone)
-  if (!person) {
-    person = { welcomed: false, tokenAt: 0, login: { step: 'idle', codeRequestedAt: 0, wrongCodes: 0 }, history: [], recent: [] }
-    people.set(phone, person)
-  }
-  return person
+export function newPerson(): Person {
+  return { welcomed: false, tokenAt: 0, login: { step: 'idle', codeRequestedAt: 0, wrongCodes: 0 }, history: [], recent: [] }
 }
 
 export function isSignedIn(person: Person): boolean {

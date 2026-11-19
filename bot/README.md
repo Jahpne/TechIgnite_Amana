@@ -10,6 +10,15 @@ Any OpenAI-compatible service that supports tool calling works.
 > that is used this way. **Use a spare number you can afford to lose, never a personal one,** and move to the
 > official Business Platform before real customers depend on this.
 
+## Two ways to run it
+
+| | Where | WhatsApp connection | State |
+| --- | --- | --- | --- |
+| **Vercel (recommended for hosting)** | `api/whatsapp.js`, a serverless webhook | The official WhatsApp Business Platform (Cloud API). Meta calls the webhook for each message. | Upstash Redis, encrypted |
+| **Always-on server** | `pnpm start` | Baileys (unofficial, a linked device) | Memory |
+
+Both use the same assistant, tools and safety rules. The rest of this file describes those; "Deploy on Vercel" is below.
+
 ## How it works
 
 ```
@@ -123,6 +132,34 @@ Run `pnpm start`. The first time, a QR code appears in the terminal. On the phon
 The login is saved in `auth_state/`. That folder is git-ignored. **Anyone who has it can act as that number**, so
 keep it private. To start over, stop the bot, delete `auth_state/` and link again.
 
+## Deploy on Vercel
+
+A serverless function cannot hold the always-on connection that Baileys needs, so on Vercel the bot uses the
+**official WhatsApp Business Platform**: Meta sends each message to a web address, the bot answers through Meta's API.
+The function is `api/whatsapp.js`, built from `src/cloud.ts` (`pnpm build:cloud`) and committed, so Vercel needs no install or build step.
+Run `pnpm build:cloud` and commit the result after changing code in `src/`.
+
+**1. Meta (WhatsApp Business Platform)**
+- Create a Meta developer app of type Business, add the **WhatsApp** product, and note the **Phone number ID** and **App secret**
+  (App settings > Basic). The free test number works for up to five recipient numbers you add yourself.
+- Create a permanent token: Business settings > System users > add one > assign the app and WhatsApp account > generate a token with
+  `whatsapp_business_messaging` and `whatsapp_business_management`.
+- Notes: WhatsApp only lets a business start a conversation with an approved *template* message. Replying to someone who wrote
+  first is free-form for 24 hours. This bot only replies, so no template is needed.
+
+**2. Redis (state)** Add Upstash Redis to the Vercel project (Storage / Marketplace) or create one at upstash.com.
+It gives `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (or Vercel's `KV_REST_API_URL` / `KV_REST_API_TOKEN`, which also work).
+
+**3. Vercel** Import the GitHub repo, set **Root Directory** to `bot`, leave the framework as Other, and add the environment variables
+from `.env.example`: `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, the two Redis values,
+`STATE_SECRET` (long random text), `AI_API_KEY`, and optionally `BOT_ALLOWED_PHONES`. Deploy.
+
+**4. Connect Meta to Vercel** In the Meta app: WhatsApp > Configuration > Webhook. Callback URL
+`https://<your-project>.vercel.app/api/whatsapp`, verify token = your `WHATSAPP_VERIFY_TOKEN`. Verify, then subscribe to the **messages** field.
+
+The webhook rejects any call that is not signed with your app secret, answers Meta straight away, and works out the reply afterwards
+(Vercel `waitUntil`, up to 60 seconds). A message that Meta retries is answered once.
+
 ## Commands
 
 | Command | What it does |
@@ -130,14 +167,15 @@ keep it private. To start over, stop the bot, delete `auth_state/` and link agai
 | `pnpm start` | Run the bot. |
 | `pnpm dev` | Run it and restart on code changes. |
 | `pnpm typecheck` | Check the types. |
-| `pnpm test` | Run the logic tests. They use a fake Amana backend and a fake AI service, so they need no keys or network. |
+| `pnpm build:cloud` | Rebuild `api/whatsapp.js` for Vercel. Commit the result. |
+| `pnpm test` | Run the tests (logic, webhook, Redis). They use fakes for Amana, the AI, Meta and Redis, so they need no keys or network. |
 
 ## Known limits
 
 - **Real people need an email on file** to get a code, because that is how the backend delivers them. An existing
   account with no email cannot sign in here. Ask the Amana team to add one, or sign in on the website.
 - **Free AI plans have tight per-minute limits.** The bot waits and retries once, then says it is busy.
-- **In-memory sessions.** A restart signs everyone out and forgets half-finished requests.
+- **Memory sessions on the always-on server.** A restart signs everyone out. On Vercel the state is in Redis instead.
 - **No pushed notifications.** The bot only answers messages. "Payment received" style messages need the backend's own sender.
 - **Voice notes, images and groups are ignored.** Groups and broadcasts are never answered.
 - **Evidence by link or note only.** The backend has no file upload endpoint.

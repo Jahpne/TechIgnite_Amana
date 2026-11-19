@@ -8,12 +8,14 @@
     "dev": "tsx watch --env-file-if-exists=.env src/index.ts",
     "start": "tsx --env-file-if-exists=.env src/index.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx test/handler.test.ts"
+    "build:cloud": "esbuild src/cloud.ts --bundle --platform=node --format=esm --target=node22 --outfile=api/whatsapp.js --log-level=warning --banner:js=\"import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\"",
+    "test": "tsx test/handler.test.ts && tsx test/webhook.test.ts && tsx test/redis.test.ts"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@vercel/functions": "^3.11.3",
     "@whiskeysockets/baileys": "7.0.0-rc14",
     "pino": "^10.4.0",
     "qrcode-terminal": "^0.12.0"
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^26.6.6",
     "@types/qrcode-terminal": "^0.12.2",
+    "esbuild": "^0.28.2",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

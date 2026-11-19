@@ -129,7 +129,7 @@ export async function runAgent(token: string, history: Turn[], userText: string)
         if (isWriteTool(name)) {
           const prepared = await prepareWrite(name, args, token)
           log.info({ tool: name }, 'The assistant asked for an action; waiting for the person to confirm')
-          return { kind: 'confirm', pending: { ...prepared, createdAt: Date.now() }, text: prepared.summary }
+          return { kind: 'confirm', pending: { tool: name, args, summary: prepared.summary, createdAt: Date.now() }, text: prepared.summary }
         }
         messages.push(toolMessage(call.id, await runRead(name, args, token)))
       } catch (error) {

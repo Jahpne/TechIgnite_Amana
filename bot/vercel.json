@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo \"api/whatsapp.js is already built and committed\"",
+  "buildCommand": "echo \"nothing to build\"",
+  "functions": {
+    "api/whatsapp.js": { "maxDuration": 60 }
+  },
+  "rewrites": [{ "source": "/webhook", "destination": "/api/whatsapp" }]
+}

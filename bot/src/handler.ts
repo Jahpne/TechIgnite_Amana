@@ -4,8 +4,10 @@ import { config } from './config.js'
 import { aiEnabled } from './llm.js'
 import { GREETING, capabilities, signedInMessage, welcome } from './messages.js'
 import { log, mask } from './log.js'
-import { PENDING_TTL_MS, SessionExpired, isSignedIn, personFor, remember, signOut } from './sessions.js'
+import { PENDING_TTL_MS, SessionExpired, isSignedIn, remember, signOut } from './sessions.js'
 import type { Person } from './sessions.js'
+import { store } from './store.js'
+import { ArgError, prepareWrite } from './tools.js'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const AFFIRM = /^(yes|y|ok|okay|confirm|go ahead|proceed|sure|do it)$/i
@@ -103,8 +105,16 @@ async function answerPending(person: Person, text: string): Promise<string | nul
   if (text === '1') {
     person.pending = undefined
     try {
-      return await pending.run(person.token!)
+      // Re-check the saved details now (the order or its status may have changed). If what would happen
+      // is no longer exactly what the person was shown, do not run it: show the new version and ask again.
+      const prepared = await prepareWrite(pending.tool, pending.args, person.token!)
+      if (prepared.summary !== pending.summary) {
+        person.pending = { ...pending, summary: prepared.summary, createdAt: Date.now() }
+        return `Something changed since I asked. ${prepared.summary}`
+      }
+      return await prepared.run(person.token!)
     } catch (error) {
+      if (error instanceof ArgError) return `I could not do that: ${error.message}`
       if (error instanceof AmanaError) {
         if (error.status === 401) throw new SessionExpired()
         return `That did not work: ${error.message}`
@@ -136,7 +146,18 @@ async function answerPending(person: Person, text: string): Promise<string | nul
  * something waits for the person's own reply of 1. The backend then checks the call as that person.
  */
 export async function reply(phone: string, text: string): Promise<string> {
-  const person = personFor(phone)
+  // One message at a time per person. Their state is loaded, updated, and saved back (it may live in Redis).
+  return store().exclusive(phone, async () => {
+    const person = await store().load(phone)
+    try {
+      return await respond(phone, person, text)
+    } finally {
+      await store().save(phone, person)
+    }
+  })
+}
+
+async function respond(phone: string, person: Person, text: string): Promise<string> {
   const clean = text.trim()
 
   if (tooFast(person)) return 'You are sending messages quickly. Please wait a minute and try again.'

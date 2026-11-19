@@ -2,7 +2,6 @@ import { amana, AmanaError } from './amana.js'
 import type { Agreement } from './amana.js'
 import { config } from './config.js'
 import { SessionExpired } from './sessions.js'
-import type { Pending } from './sessions.js'
 
 // The tools the AI may call. Each one is a real Amana endpoint, called with the person's own token.
 //
@@ -350,7 +349,10 @@ export async function runRead(name: string, a: Args, token: string): Promise<unk
 
 // ---------------------------------------------------------------- writing (prepared, then confirmed by the person)
 
-type Prepared = Pick<Pending, 'summary' | 'run'>
+export interface Prepared {
+  summary: string
+  run: (token: string) => Promise<string>
+}
 
 const ASK = 'Reply 1 to go ahead or 2 to cancel.'
 

@@ -31,4 +31,26 @@ export const config = {
   get autoLoginDebug(): boolean {
     return process.env.BOT_AUTO_LOGIN_DEBUG === 'true'
   },
+
+  /** The official WhatsApp Business Platform (Cloud API), used when the bot runs as a webhook. */
+  get whatsapp() {
+    return {
+      verifyToken: text('WHATSAPP_VERIFY_TOKEN'),
+      appSecret: text('WHATSAPP_APP_SECRET'),
+      token: text('WHATSAPP_TOKEN'),
+      phoneNumberId: text('WHATSAPP_PHONE_NUMBER_ID'),
+      apiBase: (text('WHATSAPP_API_BASE') ?? 'https://graph.facebook.com/v21.0').replace(/\/+$/, ''),
+    }
+  },
+
+  /** Where people's chat state is kept between messages when the bot runs serverless. Empty means memory. */
+  get redis() {
+    const url = text('UPSTASH_REDIS_REST_URL') ?? text('KV_REST_API_URL')
+    const token = text('UPSTASH_REDIS_REST_TOKEN') ?? text('KV_REST_API_TOKEN')
+    return url && token ? { url: url.replace(/\/+$/, ''), token } : undefined
+  },
+  /** Encrypts what is stored (it holds sign-in tokens). Required with Redis. */
+  get stateSecret(): string | undefined {
+    return text('STATE_SECRET')
+  },
 }
