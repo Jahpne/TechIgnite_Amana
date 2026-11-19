@@ -49,7 +49,7 @@ export function NewContract({
       <Card title="The project">
         <TextArea
           label="What do you need done?"
-          hint={`At least ${MIN_DESCRIPTION} characters. Say what you want, when, and how much you can pay.`}
+          hint={`Any kind of work — design, photography, building, writing, software. At least ${MIN_DESCRIPTION} characters: say what you want, when, and how much you can pay.`}
           placeholder="I need a 5 page website for my bakery, finished in 3 weeks. My budget is ₦100,000."
           value={description}
           disabled={compiling}

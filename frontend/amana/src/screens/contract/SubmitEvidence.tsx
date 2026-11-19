@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Banner, Button, Card, ConfirmDialog, FileUpload, KeyValues, PageTitle, TextArea, TextField, formatNaira } from '../../ui'
 import type { PickedFile } from '../../ui'
-import { EVIDENCE_LIMITS_TEXT, isGithubPrUrl, } from './amounts'
+import { EVIDENCE_LIMITS_TEXT, isGithubPrUrl, isWorkLink } from './amounts'
 
 export interface SubmitEvidenceProps {
   milestoneTitle: string
@@ -43,11 +43,14 @@ export function SubmitEvidence({
   const [attempted, setAttempted] = useState(false)
 
   const prProvided = prUrl.trim() !== ''
-  const prValid = !prProvided || isGithubPrUrl(prUrl)
+  const prValid = !prProvided || isWorkLink(prUrl)
   const hasEvidence = (prProvided && prValid) || files.length > 0
+  // A pull request is just a link we happen to recognise: it unlocks the
+  // automatic test check. Everything else is reviewed by the client.
+  const isPullRequest = prProvided && prValid && isGithubPrUrl(prUrl)
 
-  const prError = prProvided && !prValid ? 'Use a link like https://github.com/owner/repo/pull/12' : undefined
-  const missingError = attempted && !hasEvidence ? 'Add a GitHub pull request link or at least one screenshot.' : undefined
+  const prError = prProvided && !prValid ? 'Use a full link starting with https://' : undefined
+  const missingError = attempted && !hasEvidence ? 'Add a link to your work, or at least one file.' : undefined
 
   const handleSubmit = () => {
     setAttempted(true)
@@ -82,17 +85,26 @@ export function SubmitEvidence({
 
       <Card title="Evidence">
         <TextField
-          label="GitHub pull request link"
-          hint="Optional if you add a screenshot. Automated checks read the result from this pull request."
+          label="Link to your work"
+          hint="A published page, a design file, a shared folder — anything your client can open. Optional if you upload files instead."
           type="url"
           inputMode="url"
-          placeholder="https://github.com/owner/repo/pull/12"
+          placeholder="https://"
           value={prUrl}
           error={prError}
           onChange={onPrUrlChange}
         />
+        {isPullRequest && (
+          <p className="flex items-start gap-2 text-sm text-success">
+            <span aria-hidden="true">✓</span>
+            <span>
+              That is a GitHub pull request, so the automated test result will be checked for you as well as your
+              client's review.
+            </span>
+          </p>
+        )}
         <FileUpload
-          label="Screenshots or documents"
+          label="Photos, screenshots or documents"
           limits={EVIDENCE_LIMITS_TEXT}
           files={files}
           onPick={onPickFiles}
@@ -133,7 +145,7 @@ export function SubmitEvidence({
       >
         <p>
           You are submitting evidence for <strong>{milestoneTitle}</strong>
-          {prProvided && prValid ? ', a pull request link' : ''}
+          {prProvided && prValid ? ', a link to your work' : ''}
           {files.length > 0 ? `, and ${files.length} ${files.length === 1 ? 'file' : 'files'}` : ''}.
         </p>
         <p>It cannot be edited or deleted afterwards. If something is wrong, tell your client in the notes.</p>
