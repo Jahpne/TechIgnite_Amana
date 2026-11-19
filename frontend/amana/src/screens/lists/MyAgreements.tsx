@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  Banner,
   Button,
   EmptyState,
   ErrorState,
@@ -53,10 +54,23 @@ export interface MyAgreementsProps {
   onOpen: (id: string) => void
   onCreateOrder: () => void
   onNewContract: () => void
+  /** True when this user could be owed money but has no account on file. */
+  needsPayoutAccount?: boolean
+  onAddPayoutAccount?: () => void
 }
 
 // S10. Presentational: the logic layer supplies rows and handles navigation.
-export function MyAgreements({ rows, loading, error, onRetry, onOpen, onCreateOrder, onNewContract }: MyAgreementsProps) {
+export function MyAgreements({
+  rows,
+  loading,
+  error,
+  onRetry,
+  onOpen,
+  onCreateOrder,
+  onNewContract,
+  needsPayoutAccount,
+  onAddPayoutAccount,
+}: MyAgreementsProps) {
   const [filter, setFilter] = useState<AgreementFilter>('all')
 
   const entryPoints = (
@@ -115,6 +129,14 @@ export function MyAgreements({ rows, loading, error, onRetry, onOpen, onCreateOr
           <Button onClick={onNewContract}>Start a contract</Button>
         </div>
       </div>
+      {needsPayoutAccount && onAddPayoutAccount && (
+        <Banner tone="warning" title="We cannot pay you yet">
+          <p className="mb-2">
+            Money is sent by bank transfer, so we need your account before anything can be released to you.
+          </p>
+          <Button onClick={onAddPayoutAccount}>Add your bank account</Button>
+        </Banner>
+      )}
       {needsAction > 0 && (
         <p className="text-sm font-bold text-brand">
           {needsAction === 1 ? '1 agreement needs you' : `${needsAction} agreements need you`}.
