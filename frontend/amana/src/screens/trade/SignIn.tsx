@@ -28,10 +28,6 @@ export function SignIn(p: SignInProps) {
     return (
       <div className="grid gap-5">
         <div className="grid gap-2">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-success-soft px-2.5 py-1 text-[0.68rem] font-bold tracking-wide text-success uppercase">
-            <span aria-hidden="true" className="size-1.5 rounded-full bg-success" />
-            Money held until delivery
-          </span>
           <h1 className="font-display text-[1.6rem] leading-[1.1] font-extrabold tracking-tight">
             Deals where nobody has to go first
           </h1>
