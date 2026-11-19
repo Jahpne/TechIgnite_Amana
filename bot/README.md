@@ -19,7 +19,12 @@ WhatsApp message
   Rate limit, allow-list, one message at a time per person
       |
       v
-  Not signed in?  ->  sign in by code (below), then carry on
+  Not signed in?
+      |-- first contact -> a short welcome: what the bot can do + the website link. Nothing is emailed yet.
+      '-- next message  -> sign in by code (below), then carry on
+      |
+      v
+  "hi", "help", "menu", "what can you do"?  -> the fixed list of what it can do + the website link (no AI)
       |
       v
   An action is waiting for a 1?
@@ -38,11 +43,17 @@ WhatsApp message
 
 Amana signs people in with a one-time code that the backend emails. The bot does this in the chat:
 
-1. First message: the bot asks the backend to send a code and says where it went (a masked address).
+1. After the welcome, the person's next message makes the bot ask the backend to send a code. It says where it went (a masked address). Nobody gets a code email before they have seen the welcome.
 2. The person replies with the 6-digit code. The bot gets that person's own token. It is kept in memory only, never on disk.
 3. A brand-new number is asked for an email address first (the backend only accepts one for a new account).
 
 Every call after that uses the person's own token, so the backend decides who may do what. The bot holds no master key.
+
+### What it says about itself
+
+The welcome, the "what I can do" list and the website link (`PUBLIC_WEB_URL`) are fixed messages in `src/messages.ts`,
+not written by the AI, so they are always the same and always accurate. The AI is also told never to assume the person
+wants an order: when someone is unsure or asks for something it cannot do, it lists what it can help with and gives the link.
 
 ### The tools (the endpoints)
 

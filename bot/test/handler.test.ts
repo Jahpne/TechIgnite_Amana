@@ -103,29 +103,44 @@ const reset = () => { writes.length = 0; reads.length = 0; aiCalls.length = 0; s
 async function signedIn(phone: string): Promise<void> {
   otpMode = 'sent'
   await reply(phone, 'hi')
+  await reply(phone, 'start')
   await reply(phone, '123456')
   reset()
 }
 
 // ================================================================== signing in
 let r = await reply('+2348000000001', 'hi')
-check('first message: a code is requested, not an AI call', otpRequests.at(-1)?.phone === '+2348000000001' && aiCalls.length === 0)
-check('first message: asks for the emailed code and shows the masked address', r.includes('a***@x.com') && r.includes('6-digit'), r)
+check('first contact: a welcome that says what the bot does and links the website', r.includes('Amana assistant') && r.includes('protected order') && r.includes('https://web.test') && r.includes('START'), r)
+check('first contact: no code is emailed yet, no AI call', otpRequests.length === 0 && aiCalls.length === 0)
+check('first contact: the welcome does not push the person to create an order', !/create (an|a) order/i.test(r), r)
+r = await reply('+2348000000001', 'start')
+check('after the welcome: a code is requested', otpRequests.at(-1)?.phone === '+2348000000001' && aiCalls.length === 0)
+check('after the welcome: asks for the emailed code and shows the masked address', r.includes('a***@x.com') && r.includes('6-digit'), r)
 r = await reply('+2348000000001', '000000')
 check('wrong code: the backend message comes back', r.includes('Incorrect code'), r)
 r = await reply('+2348000000001', '123456')
-check('right code: signed in', r.startsWith('You are signed in'), r)
+check('right code: signed in, with the list of what the bot can do and the link', r.startsWith('You are signed in') && r.includes('Here is what I can do') && r.includes('https://web.test'), r)
 check('sign-in: no write and no AI call', writes.length === 0 && aiCalls.length === 0)
 reset()
 
 otpMode = 'needsEmail'
-r = await reply('+2348000000002', 'hello')
+await reply('+2348000000002', 'hello')
+r = await reply('+2348000000002', 'start')
 check('new number: asks for an email', r.includes('email address'), r)
 r = await reply('+2348000000002', 'not an email')
 check('bad email: asks again, no request sent', r.includes('valid email') && otpRequests.filter((o) => o.phone === '+2348000000002').length === 1, r)
 otpMode = 'sent'
 r = await reply('+2348000000002', 'me@x.com')
 check('good email: sent with the code request', otpRequests.at(-1)?.email === 'me@x.com' && r.includes('6-digit'), JSON.stringify(otpRequests.at(-1)))
+
+// ================================================================== greetings and "what can you do"
+await signedIn('+2348000000011')
+for (const q of ['hi', 'Help', 'menu', 'what can you do?', 'how does this work']) {
+  r = await reply('+2348000000011', q)
+  check(`"${q}": the fixed list and the website link, no AI`, r.startsWith('Here is what I can do') && r.includes('https://web.test') && aiCalls.length === 0, r)
+}
+check('the list is short and lists four things', (r.match(/^•/gm) ?? []).length === 4, r)
+reset()
 
 // ================================================================== reading with tools
 await signedIn('+2348000000010')
@@ -232,7 +247,7 @@ check('the approved explanation passes the checks untouched', r.startsWith('Aman
 reset()
 
 script.push(say('**Hello**! Here is `your info`.\n## Orders'))
-r = await reply('+2348000000010', 'hi')
+r = await reply('+2348000000010', 'format this please')
 check('markdown is removed for WhatsApp', r === 'Hello! Here is your info.\nOrders', JSON.stringify(r))
 reset()
 
@@ -245,7 +260,7 @@ reset()
 
 // ================================================================== failures
 script.push('fail')
-r = await reply('+2348000000010', 'hello again')
+r = await reply('+2348000000010', 'check something for me')
 check('AI down: a plain message, no crash', r.includes('not answering'), r)
 reset()
 
@@ -262,10 +277,12 @@ reset()
 process.env.BOT_AUTO_LOGIN_DEBUG = 'true'
 otpMode = 'debug'
 script.push(say('Hello! How can I help?'))
-r = await reply('+2348000000020', 'hi')
+await reply('+2348000000020', 'hi')
+r = await reply('+2348000000020', 'hi again')
 check('sandbox auto sign-in: signed in with the debug code, then answered', r === 'Hello! How can I help?' && otpVerifies.at(-1)?.code === '123456', r)
 process.env.BOT_AUTO_LOGIN_DEBUG = 'false'
-r = await reply('+2348000000021', 'hi')
+await reply('+2348000000021', 'hi')
+r = await reply('+2348000000021', 'hi again')
 check('flag off: the debug code is not used', r.includes('cannot send a sign-in code') && aiCalls.length === 1, r)
 otpMode = 'sent'
 reset()

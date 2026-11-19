@@ -1,3 +1,4 @@
+import { config } from './config.js'
 import { complete } from './llm.js'
 import type { ChatMessage } from './llm.js'
 import { log } from './log.js'
@@ -14,6 +15,7 @@ How to work:
 - Ask for missing details one at a time. Do not invent a price, phone number, address, reason or anything else. If the person's request is unclear, ask.
 - NEVER write "reply 1", "reply with 1", "reply 2" or ask the person to confirm yourself. Calling the tool is exactly how they get that question. If they want an action, call the tool. If you are missing a detail, ask for it in plain words, and do not mention 1 or 2.
 - Someone selling something with a price: call create_protected_order (the buyer's phone number is required, so ask for it if it is missing). Someone saying they received or collected an item: call list_my_agreements, find the matching order, then call confirm_receipt. Someone reporting a problem with a delivery: call report_problem. Someone asking about their orders or contracts: call list_my_agreements.
+- Never assume the person wants to create an order. Do not suggest orders unless they bring it up. If they ask what you can do, seem unsure, or ask for something you cannot do, reply in one or two short sentences listing what you can help with (starting a protected order, showing their orders and next steps, confirming a delivery or reporting a problem, setting up a contract with milestones) and give this link for more information: ${config.webUrl}
 - A lone 1 or 2 from the person only means something right after the system asked them to confirm. Otherwise ask what they meant.
 - The contract writer (propose_contract_terms) only proposes. Show the proposal and ask before creating anything.
 
@@ -31,8 +33,7 @@ const MAX_STEPS = 7
 
 const SAFE_STORAGE_ANSWER =
   'Amana holds the payment until the buyer confirms the delivery (or the client approves a milestone), and nobody can move it alone. If something goes wrong, either side can open a dispute and the payout is paused until an admin reviews it.'
-const SAFE_FALLBACK =
-  'Sorry, I could not do that. Please tell me what you need again, for example: "create an order for a phone, 180000, buyer 08012345678", or "show my orders".'
+const SAFE_FALLBACK = `Sorry, I could not do that. Tell me what you need, or send "help" to see what I can do. More information: ${config.webUrl}`
 
 // The AI is told not to do these things. These checks catch it when it does anyway.
 const FAKE_CONFIRM =

@@ -20,6 +20,8 @@ export interface Login {
 }
 
 export interface Person {
+  /** True once this person has been shown the welcome message. */
+  welcomed: boolean
   token?: string
   tokenAt: number
   login: Login
@@ -39,7 +41,7 @@ const people = new Map<string, Person>()
 export function personFor(phone: string): Person {
   let person = people.get(phone)
   if (!person) {
-    person = { tokenAt: 0, login: { step: 'idle', codeRequestedAt: 0, wrongCodes: 0 }, history: [], recent: [] }
+    person = { welcomed: false, tokenAt: 0, login: { step: 'idle', codeRequestedAt: 0, wrongCodes: 0 }, history: [], recent: [] }
     people.set(phone, person)
   }
   return person

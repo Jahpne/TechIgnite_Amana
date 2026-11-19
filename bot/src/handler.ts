@@ -2,6 +2,7 @@ import { runAgent } from './agent.js'
 import { amana, AmanaError } from './amana.js'
 import { config } from './config.js'
 import { aiEnabled } from './llm.js'
+import { GREETING, capabilities, signedInMessage, welcome } from './messages.js'
 import { log, mask } from './log.js'
 import { PENDING_TTL_MS, SessionExpired, isSignedIn, personFor, remember, signOut } from './sessions.js'
 import type { Person } from './sessions.js'
@@ -66,7 +67,7 @@ async function signIn(phone: string, person: Person, text: string): Promise<stri
         person.token = verified.token
         person.tokenAt = Date.now()
         person.login = { step: 'idle', codeRequestedAt: 0, wrongCodes: 0 }
-        return "You are signed in. What would you like to do? For example: show my orders, or create a protected order."
+        return signedInMessage()
       } catch (error) {
         if (error instanceof AmanaError) {
           person.login.wrongCodes += 1
@@ -145,6 +146,14 @@ export async function reply(phone: string, text: string): Promise<string> {
       // Drop a stale token, but keep the sign-in step: the person may be midway through it.
       person.token = undefined
       person.pending = undefined
+
+      // First contact: say what this is and what it can do, and link the website. Signing in starts
+      // only after the person has seen that and replied, so nobody gets a code email they did not ask for.
+      if (!person.welcomed && person.login.step === 'idle') {
+        person.welcomed = true
+        return welcome()
+      }
+
       const outcome = await signIn(phone, person, clean)
       if (outcome !== SIGNED_IN) return outcome
     }
@@ -153,6 +162,13 @@ export async function reply(phone: string, text: string): Promise<string> {
     if (answered !== null) {
       remember(person, clean, answered)
       return answered
+    }
+
+    // "hi", "help", "what can you do": answer with the fixed list and the link. No AI needed.
+    if (GREETING.test(clean)) {
+      const answer = capabilities()
+      remember(person, clean, answer)
+      return answer
     }
 
     if (!aiEnabled) {
