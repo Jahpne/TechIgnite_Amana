@@ -29,7 +29,7 @@ export function SignIn(p: SignInProps) {
       <div className="grid gap-5">
         <div className="grid gap-2">
           <h1 className="font-display text-[1.6rem] leading-[1.1] font-extrabold tracking-tight">
-            Deals where nobody has to go first
+            Get started
           </h1>
           <p className="text-sm leading-relaxed text-muted">
             We email you a one-time code. No password to forget.
