@@ -1,3 +1,4 @@
+import { createServer } from 'node:http'
 import { config } from './config.js'
 import { reply } from './handler.js'
 import { aiEnabled, checkModel } from './llm.js'
@@ -17,6 +18,15 @@ log.info(
 process.on('unhandledRejection', (reason) => {
   log.error({ reason: String(reason) }, 'Unhandled rejection')
 })
+
+// Optional. Some hosts (a worker behind a web proxy) expect the program to listen on a port.
+// Set BOT_HEALTH_PORT (or PORT) and the bot answers "ok" there. It serves nothing else and shows no data.
+const healthPort = Number(process.env.BOT_HEALTH_PORT ?? process.env.PORT ?? '')
+if (Number.isInteger(healthPort) && healthPort > 0) {
+  createServer((_request, response) => {
+    response.writeHead(200, { 'content-type': 'text/plain' }).end('Amana bot is running')
+  }).listen(healthPort, () => log.info({ port: healthPort }, 'Health port open'))
+}
 
 await checkModel()
 await startWhatsApp(reply)
