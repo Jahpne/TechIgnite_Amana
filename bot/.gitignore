@@ -1,6 +1,9 @@
 # The WhatsApp login. Anyone who has these files can act as the linked number.
 auth_state*/
 
+# The bot's own log file
+logs/
+
 # Secrets (the internal API key, the Anthropic key)
 .env
 .env.*

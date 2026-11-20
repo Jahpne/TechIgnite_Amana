@@ -1,7 +1,28 @@
 // App log. Phone numbers are masked, and message text is never written to the log.
 // A tiny logger with no dependencies, so the same code runs on a server and in a serverless function.
+import { appendFileSync, mkdirSync } from 'node:fs'
+import { dirname } from 'node:path'
+
 const LEVELS = { debug: 10, info: 20, warn: 30, error: 40, silent: 100 } as const
 type Level = keyof typeof LEVELS
+
+let logFile: string | undefined
+
+/**
+ * Also write every log line to a file, creating its folder first. For hosts that do not show the program's
+ * output. Returns the path, or undefined if the file could not be created. Never throws.
+ */
+export function enableFileLog(path: string): string | undefined {
+  try {
+    mkdirSync(dirname(path), { recursive: true })
+    appendFileSync(path, '')
+    logFile = path
+    return path
+  } catch (error) {
+    console.error(JSON.stringify({ level: 'error', msg: 'Could not open the log file', path, err: String(error) }))
+    return undefined
+  }
+}
 
 function write(level: Exclude<Level, 'silent'>, first: unknown, second?: unknown): void {
   const wanted = LEVELS[(process.env.LOG_LEVEL as Level | undefined) ?? 'info'] ?? LEVELS.info
@@ -10,6 +31,13 @@ function write(level: Exclude<Level, 'silent'>, first: unknown, second?: unknown
   const line = JSON.stringify({ level, time: new Date().toISOString(), ...fields, msg: message })
   if (level === 'error' || level === 'warn') console.error(line)
   else console.log(line)
+  if (logFile) {
+    try {
+      appendFileSync(logFile, `${line}\n`)
+    } catch {
+      // A full disk or a missing folder must never stop the bot.
+    }
+  }
 }
 
 type LogFn = (first: unknown, second?: string) => void
