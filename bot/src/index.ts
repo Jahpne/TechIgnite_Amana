@@ -1,3 +1,4 @@
+import { loadedEnvFile } from './loadenv.js' // must stay first: it loads bot.env before anything reads a setting
 import { mkdirSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { resolve } from 'node:path'
@@ -16,7 +17,13 @@ try {
   log.error({ authDir: resolve(config.authDir), err: String(error) }, 'Could not create the login folder')
 }
 log.info(
-  { node: process.version, cwd: process.cwd(), logFile: logFile ?? 'none', authDir: resolve(config.authDir) },
+  {
+    node: process.version,
+    cwd: process.cwd(),
+    settingsFile: loadedEnvFile ?? 'none (using the environment and .env)',
+    logFile: logFile ?? 'none',
+    authDir: resolve(config.authDir),
+  },
   'Folders ready',
 )
 
