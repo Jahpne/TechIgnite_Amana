@@ -1,5 +1,5 @@
 # The WhatsApp login. Anyone who has these files can act as the linked number.
-auth_state/
+auth_state*/
 
 # Secrets (the internal API key, the Anthropic key)
 .env
